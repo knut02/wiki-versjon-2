@@ -7,7 +7,8 @@
     "start": "astro dev",
     "build": "astro build",
     "postbuild": "pagefind --site dist",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@astrojs/alpinejs": "^1.0.0",
@@ -21,6 +22,7 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "pagefind": "^1.5.2"
+    "pagefind": "^1.5.2",
+    "wrangler": "^4.152.0"
   }
 }
