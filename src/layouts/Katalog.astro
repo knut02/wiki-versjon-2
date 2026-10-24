@@ -1,0 +1,63 @@
+---
+import Base from "./Base.astro";
+import { categories, place, searchText, subcategories } from "../lib/katalog.js";
+
+interface Props {
+  title: string;
+  heading?: string;
+  note: string;
+  articles: any[];
+  all: any[];
+  activeCategory?: string;
+  activeSub?: string;
+  activeTag?: string;
+}
+
+const { title, heading, note, articles, all, activeCategory = "", activeSub, activeTag = "" } = Astro.props;
+const cats = categories(all);
+const subs = activeCategory ? subcategories(all, activeCategory) : [];
+const countLabel = articles.length === 1 ? "1 artikkel" : `${articles.length} artikler`;
+---
+
+<Base
+  title={title}
+  back={activeSub ? `/kategori/${activeCategory}` : activeCategory || activeTag ? "/" : undefined}
+  categories={cats}
+  subcategories={subs}
+  activeCategory={activeCategory}
+  activeSub={activeSub}
+  activeTag={activeTag}
+>
+  <section class="catalog">
+    <header class="catalog-head">
+      {heading && <h1>{heading}</h1>}
+      <form class="search" role="search">
+        <label for="sok">Søk</label>
+        <input id="sok" name="q" type="search" autocomplete="off" enterkeyhint="search" />
+      </form>
+      <p class="result-count" id="antall" aria-live="polite">{countLabel}</p>
+    </header>
+    <p class="note">{note}</p>
+    <ul class="song-list">
+      {
+        articles.map((article) => (
+          <li data-search={searchText(article)}>
+            <a class="song-row" href={`/artikkel/${article.id}`}>
+              <span class="song-title">{article.data.title}</span>
+              <span class="tags">
+                <span class="tag">{place(article)}</span>
+                {article.data.tags.slice(0, 3).map((tag) => (
+                  <span class="tag">{tag.name}</span>
+                ))}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="empty" id="ingen" hidden>Ingen artikler passer med søket.</p>
+  </section>
+  <script>
+    import "../scripts/sok.js";
+  </script>
+</Base>

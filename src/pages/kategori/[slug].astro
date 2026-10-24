@@ -1,0 +1,10 @@
+---
+import { getParents, loadDocs } from "@/lib/docs";
+
+export async function getStaticPaths() {
+  const parents = getParents(await loadDocs());
+  return parents.map((parent) => ({ params: { slug: parent.slug } }));
+}
+
+return Astro.redirect(`/${Astro.params.slug}`);
+---

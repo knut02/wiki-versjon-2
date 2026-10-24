@@ -1,0 +1,52 @@
+---
+import CategoryCard from "@/components/home/CategoryCard.astro";
+import HomeHero from "@/components/home/HomeHero.astro";
+import RecentUpdates from "@/components/home/RecentUpdates.astro";
+import { home } from "@/config/home";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import {
+  getCategoryName,
+  getDocHref,
+  getParents,
+  getRecentDocs,
+  getSuggestedSearchArticles,
+  loadDocs,
+} from "@/lib/docs";
+
+const publicDocs = await loadDocs();
+const suggestions = getSuggestedSearchArticles(publicDocs, {
+  limit: home.popular.limit,
+  categories: home.popular.categories,
+});
+const recent = getRecentDocs(publicDocs, home.recent.limit).map((doc) => ({
+  title: doc.data.title,
+  href: getDocHref(doc),
+  category: getCategoryName(publicDocs, doc),
+  updatedAt: doc.data.updatedAt!,
+}));
+const recentDays = new Set(recent.map((item) => item.updatedAt.toISOString().slice(0, 10)));
+const showRecent = recentDays.size > 1;
+const parents = getParents(publicDocs);
+---
+
+<BaseLayout>
+  <HomeHero suggestions={suggestions} />
+
+  <section class="shell shell-narrow py-10 md:py-12" aria-label="Kategorier">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {
+        parents.map((parent) => (
+          <CategoryCard
+            title={parent.name}
+            description={parent.description}
+            count={parent.count}
+            href={`/${parent.slug}`}
+            icon={parent.icon}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  {showRecent && <RecentUpdates items={recent} />}
+</BaseLayout>

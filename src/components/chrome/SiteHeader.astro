@@ -1,0 +1,82 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import Logomark from '@/components/ui/Logomark.astro';
+import { siteConfig } from '@/config/site';
+import { getParents, loadDocs } from '@/lib/docs';
+
+const parents = getParents(await loadDocs());
+const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+const currentParent = parents.find((parent) => isActive(`/${parent.slug}`));
+---
+
+<header class="site-header">
+  <div class="shell flex h-full items-center gap-3">
+    <a href="/" class="flex shrink-0 items-center gap-2.5 rounded-lg" aria-label={`${siteConfig.name}, forside`}>
+      <Logomark class="size-7" />
+      <span class="text-[1.05rem] font-bold tracking-[-0.03em] text-ink">{siteConfig.name}</span>
+    </a>
+
+    {
+      currentParent && (
+        <a
+          href={`/${currentParent.slug}`}
+          class="current-section hidden sm:block"
+          aria-current={pathname === `/${currentParent.slug}` ? 'page' : undefined}
+        >
+          {currentParent.name}
+        </a>
+      )
+    }
+
+    <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
+      <button type="button" class="search-trigger hidden w-56 md:inline-flex xl:w-64" data-search-open>
+        <Icon name="search" class="size-4" />
+        <span class="flex-1 text-left">Søk...</span>
+        <span class="flex gap-1">
+          <kbd class="kbd" data-shortcut-mod>Ctrl</kbd>
+          <kbd class="kbd">K</kbd>
+        </span>
+      </button>
+      <button type="button" class="icon-button md:hidden" aria-label="Søk" data-search-open>
+        <Icon name="search" class="size-[1.15rem]" />
+      </button>
+
+      <button type="button" class="icon-button theme-toggle" aria-label="Bytt mellom lys og mørk" data-theme-toggle>
+        <Icon name="moon" class="icon-moon size-[1.15rem]" />
+        <Icon name="sun" class="icon-sun size-[1.15rem]" />
+      </button>
+
+      <button type="button" class="button button-secondary category-toggle" popovertarget="category-menu">
+        <Icon name="layout-grid" class="size-4" />
+        Kategorier
+        <Icon name="chevron-down" class="category-toggle-icon size-4" />
+      </button>
+    </div>
+  </div>
+
+  <div id="category-menu" popover="auto" class="category-menu">
+    <nav class="shell grid gap-1 py-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Kategorier">
+      {
+        parents.map((parent) => {
+          const href = `/${parent.slug}`;
+          return (
+            <a href={href} class="category-menu-link" aria-current={isActive(href) ? 'page' : undefined}>
+              <span class="min-w-0">
+                <span class="block truncate">{parent.name}</span>
+                <span class="mt-0.5 block text-xs font-normal text-muted">{parent.count} artikler</span>
+              </span>
+              <Icon name="arrow-right" class="size-4 shrink-0 text-faint" />
+            </a>
+          );
+        })
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  if (/Mac|iPhone|iPad/.test(navigator.userAgent)) {
+    document.querySelectorAll('[data-shortcut-mod]').forEach((key) => (key.textContent = '⌘'));
+  }
+</script>

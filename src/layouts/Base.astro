@@ -1,0 +1,92 @@
+---
+import "@fontsource/lato/latin-400.css";
+import "@fontsource/lato/latin-ext-400.css";
+import "@fontsource/lato/latin-700.css";
+import "@fontsource/lato/latin-ext-700.css";
+import "../styles/styles.css";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title?: string;
+  back?: string;
+  categories?: [string, string][];
+  subcategories?: [string, string][];
+  activeCategory?: string;
+  activeSub?: string;
+  activeTag?: string;
+}
+
+const {
+  title = "Studie",
+  back,
+  categories = [],
+  subcategories = [],
+  activeCategory = "",
+  activeSub,
+  activeTag = "",
+} = Astro.props;
+const pageTitle = title === "Studie" ? title : `${title} – Studie`;
+---
+
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#2c3e50" />
+    <title>{pageTitle}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip" href="#innhold">Hopp til innhold</a>
+    <header class="topbar">
+      {back ? <a class="back" href={back}>Tilbake</a> : <span></span>}
+      <a class="brand" href="/">Studie</a>
+      <span></span>
+    </header>
+    <div class="page">
+      <div class="mast">
+        {
+          categories.length > 0 && (
+            <nav class="category-nav" aria-label="Kategori">
+              <a href="/" aria-current={!activeCategory && !activeTag ? "page" : undefined}>
+                Alle
+              </a>
+              {categories.map(([slug, name]) => (
+                <a
+                  href={`/kategori/${slug}`}
+                  aria-current={activeCategory === slug && !activeTag ? "page" : undefined}
+                >
+                  {name}
+                </a>
+              ))}
+            </nav>
+          )
+        }
+        {
+          activeCategory && subcategories.length > 0 && (
+            <nav class="category-nav sub" aria-label="Underkategori">
+              <a href={`/kategori/${activeCategory}`} aria-current={activeSub === "" ? "page" : undefined}>
+                Alle
+              </a>
+              {subcategories.map(([slug, name]) => (
+                <a
+                  href={`/kategori/${activeCategory}/${slug}`}
+                  aria-current={activeSub === slug ? "page" : undefined}
+                >
+                  {name}
+                </a>
+              ))}
+            </nav>
+          )
+        }
+      </div>
+      <main id="innhold">
+        <slot />
+      </main>
+    </div>
+    <footer class="site-footer">
+      <p>Artikler fra biblioteket</p>
+    </footer>
+  </body>
+</html>

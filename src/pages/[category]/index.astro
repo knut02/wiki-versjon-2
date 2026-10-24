@@ -1,0 +1,44 @@
+---
+import CategoryCard from "@/components/home/CategoryCard.astro";
+import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
+import DocsLayout from "@/layouts/DocsLayout.astro";
+import { getParents, getSidebarGroups, loadDocs } from "@/lib/docs";
+
+export async function getStaticPaths() {
+  const docs = await loadDocs();
+  return getParents(docs).map((parent) => ({
+    params: { category: parent.slug },
+    props: { parent },
+  }));
+}
+
+const { parent } = Astro.props;
+const groups = getSidebarGroups(await loadDocs(), parent.slug);
+---
+
+<DocsLayout title={parent.name} description={parent.description} parent={parent}>
+  <Breadcrumbs items={[{ label: "Hjem", href: "/" }, { label: parent.name }]} />
+
+  <header class="mt-6 border-b border-line pb-8">
+    <h1 class="text-[2.15rem] leading-[1.15] font-bold tracking-[-0.035em] md:text-[2.6rem]">{parent.name}</h1>
+    {
+      parent.description && (
+        <p class="mt-4 max-w-2xl text-[1.075rem] leading-relaxed text-muted">{parent.description}</p>
+      )
+    }
+  </header>
+
+  <div class="mt-8 grid gap-4 md:grid-cols-2">
+    {
+      groups.map((group) => (
+        <CategoryCard
+          title={group.name}
+          description={group.description}
+          count={group.articles.length}
+          href={group.href}
+          icon={group.icon}
+        />
+      ))
+    }
+  </div>
+</DocsLayout>

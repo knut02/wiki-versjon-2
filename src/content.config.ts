@@ -1,0 +1,24 @@
+import { defineCollection } from "astro:content";
+
+import { z } from "astro/zod";
+
+import { wikiLoader } from "./lib/wiki-loader.js";
+
+const artikler = defineCollection({
+  loader: wikiLoader(),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.string(),
+    kategori: z.string(),
+    kategoriSlug: z.string(),
+    kategoriDescription: z.string(),
+    sub: z.string(),
+    subSlug: z.string(),
+    subDescription: z.string(),
+    tags: z.array(z.object({ name: z.string(), slug: z.string() })),
+    links: z.array(z.string()),
+  }),
+});
+
+export const collections = { artikler };

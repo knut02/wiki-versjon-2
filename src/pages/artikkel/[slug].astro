@@ -1,0 +1,13 @@
+---
+import { getDocHref, loadDocs } from "@/lib/docs";
+
+export async function getStaticPaths() {
+  const docs = await loadDocs();
+  return docs.map((doc) => ({
+    params: { slug: doc.id },
+    props: { destination: getDocHref(doc) },
+  }));
+}
+
+return Astro.redirect(Astro.props.destination);
+---

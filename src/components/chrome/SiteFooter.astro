@@ -1,0 +1,23 @@
+---
+import { footerLinks, siteConfig } from '@/config/site';
+---
+
+<footer class="site-footer">
+  <div class="shell flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+    <div class="max-w-md">
+      <a href="/" class="text-[1.05rem] font-bold tracking-[-0.03em] text-ink">{siteConfig.name}</a>
+      <p class="mt-2 text-sm leading-6 text-muted">{siteConfig.footerText}</p>
+    </div>
+    <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="Mer">
+      {footerLinks.map((link) => (
+        <a href={link.href} class="footer-link text-sm">{link.label}</a>
+      ))}
+    </nav>
+  </div>
+
+  <div class="border-t border-line">
+    <div class="shell py-5 text-sm text-muted">
+      <p>&copy; {new Date().getFullYear()} {siteConfig.name}</p>
+    </div>
+  </div>
+</footer>

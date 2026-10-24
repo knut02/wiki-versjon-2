@@ -1,0 +1,14 @@
+---
+import { getCategories, loadDocs } from "@/lib/docs";
+
+export async function getStaticPaths() {
+  const categories = getCategories(await loadDocs());
+  return categories
+    .filter((category) => category.slug !== "oversikt")
+    .map((category) => ({
+      params: { slug: category.parent, sub: category.slug },
+    }));
+}
+
+return Astro.redirect(`/${Astro.params.slug}/${Astro.params.sub}`);
+---
