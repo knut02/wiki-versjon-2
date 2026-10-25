@@ -1,0 +1,20 @@
+---
+import ArticlePage from '@/components/docs/ArticlePage.astro';
+import { getCategories, loadDocs } from '@/lib/docs';
+
+export async function getStaticPaths() {
+  const docs = await loadDocs();
+  const reserved = new Set(getCategories(docs).map((category) => `${category.parent}/${category.slug}`));
+
+  return docs
+    .filter((doc) => !doc.data.category && !reserved.has(`${doc.data.parent}/${doc.id}`))
+    .map((doc) => ({
+      params: { category: doc.data.parent, slug: doc.id },
+      props: { id: doc.id },
+    }));
+}
+
+const { id } = Astro.props;
+---
+
+<ArticlePage id={id} />

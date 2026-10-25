@@ -1,8 +1,10 @@
 ---
 import CategoryCard from "@/components/home/CategoryCard.astro";
+import PaginatedArticleList from "@/components/PaginatedArticleList.astro";
 import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
+import Icon from "@/components/ui/Icon.astro";
 import DocsLayout from "@/layouts/DocsLayout.astro";
-import { getParents, getSidebarGroups, loadDocs } from "@/lib/docs";
+import { getDocHref, getOrderedDocsForCategory, getParents, getSidebarGroups, loadDocs } from "@/lib/docs";
 
 export async function getStaticPaths() {
   const docs = await loadDocs();
@@ -13,7 +15,9 @@ export async function getStaticPaths() {
 }
 
 const { parent } = Astro.props;
-const groups = getSidebarGroups(await loadDocs(), parent.slug);
+const docs = await loadDocs();
+const groups = getSidebarGroups(docs, parent.slug);
+const articles = getOrderedDocsForCategory(docs, parent.slug, "");
 ---
 
 <DocsLayout title={parent.name} description={parent.description} parent={parent}>
@@ -26,19 +30,52 @@ const groups = getSidebarGroups(await loadDocs(), parent.slug);
         <p class="mt-4 max-w-2xl text-[1.075rem] leading-relaxed text-muted">{parent.description}</p>
       )
     }
+    {
+      articles.length > 0 && groups.length === 0 && (
+        <p class="docs-meta mt-5">
+          <span class="docs-meta-item">
+            <Icon name="file-text" class="size-[0.9rem]" />
+            {`${articles.length} ${articles.length === 1 ? "artikkel" : "artikler"}`}
+          </span>
+        </p>
+      )
+    }
   </header>
 
-  <div class="mt-8 grid gap-4 md:grid-cols-2">
-    {
-      groups.map((group) => (
-        <CategoryCard
-          title={group.name}
-          description={group.description}
-          count={group.articles.length}
-          href={group.href}
-          icon={group.icon}
+  {
+    groups.length > 0 && (
+      <div class="mt-8 grid gap-4 md:grid-cols-2">
+        {groups.map((group) => (
+          <CategoryCard
+            title={group.name}
+            description={group.description}
+            count={group.articles.length}
+            href={group.href}
+            icon={group.icon}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  {
+    articles.length > 0 && (
+      <div class={groups.length > 0 ? "mt-12" : "mt-8"}>
+        {groups.length > 0 && <h2 class="mb-4 text-base font-semibold">Artikler</h2>}
+        <PaginatedArticleList
+          items={articles.map((doc) => ({
+            title: doc.data.title,
+            description: doc.data.description,
+            href: getDocHref(doc),
+          }))}
         />
-      ))
-    }
-  </div>
+      </div>
+    )
+  }
+
+  {
+    groups.length === 0 && articles.length === 0 && (
+      <div class="panel mt-8 px-6 py-14 text-center text-muted">Ingen artikler i denne kategorien.</div>
+    )
+  }
 </DocsLayout>

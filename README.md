@@ -18,7 +18,8 @@ Kategorier kommer fra mapper, ikke fra frontmatter-feltene `kategori` og `sub-ka
 
 - Toppmappen er hovedkategori. Navn og beskrivelse hentes fra den mappens `_index.md` (`title` og `description`). Mangler tittel, brukes mappenavnet.
 - Undermappen er underkategori, med beskrivelse fra den mappens `_index.md`.
-- En fil som ligger direkte i en toppmappe får underkategorien `oversikt`.
+- En fil som ligger direkte i en toppmappe hører til hovedkategorien. Det lages ingen underkategori for den.
+- `_index.md` brukes bare som navn og beskrivelse for mappen, og blir ikke en egen artikkel.
 
 Slug lages med små bokstaver. `æ` blir `ae`, `ø` blir `o`, `å` blir `a`. Wikilenker på formen `[[sti/filnavn]]` eller `[[sti/filnavn|alias]]` peker til artikkelen med det slugifiserte filnavnet.
 
@@ -29,12 +30,13 @@ Slug lages med små bokstaver. `æ` blir `ae`, `ø` blir `o`, `å` blir `a`. Wik
 | Forside | `/` |
 | Hovedkategori | `/{kategori}` |
 | Underkategori | `/{kategori}/{underkategori}` |
-| Artikkel | `/{kategori}/{underkategori}/{artikkel}` |
+| Artikkel i en underkategori | `/{kategori}/{underkategori}/{artikkel}` |
+| Artikkel i hovedkategorien | `/{kategori}/{artikkel}` |
 | Tagg | `/tag/{tagg}` |
 
-Eldre adresser videresendes: `/artikkel/{slug}`, `/kategori/{slug}` og `/kategori/{slug}/{underkategori}`.
+Eldre adresser videresendes: `/artikkel/{slug}`, `/kategori/{slug}` og `/kategori/{slug}/{underkategori}`. Artikler som tidligere lå under den oppdiktede bolken `oversikt` videresendes fra `/{kategori}/oversikt/{artikkel}`.
 
-Forsiden viser hovedkategoriene. Underkategoriene vises på kategorisiden, og artiklene på underkategorisiden. Taggene på en artikkel lenker til taggsiden.
+Forsiden viser hovedkategoriene. Underkategoriene vises på kategorisiden. Artikler som ligger rett i toppmappen vises der også. Taggene på en artikkel lenker til taggsiden.
 
 «Utvalg» under søkefeltet er de fire første artiklene i alfabetisk rekkefølge. Antall og eventuell avgrensning styres av `popular` i `src/config/home.ts`.
 
@@ -65,7 +67,7 @@ npm run preview
 - MDX- og sitemap-integrasjoner
 - Innholdssamlingen `artikler` med en egen loader
 - Utseende fra temaet [Compass](https://xocothemes.com/themes/compass/) (Xoco Themes)
-- Lys modus er standard. Valget lagres i `localStorage` under nøkkelen `compass-theme`
+- Temaet følger enhetens lys- eller mørkmodus. Et eget valg lagres i `localStorage` under nøkkelen `compass-theme`
 - `@/` peker på `src/`
 
 Nettstedets navn, beskrivelse og `siteUrl` ligger i `src/config/site.ts`. `siteUrl` står nå til `http://localhost:4173` og må oppdateres før publisering, ellers blir kanoniske lenker, RSS og sitemap feil.

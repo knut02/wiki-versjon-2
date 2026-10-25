@@ -9,13 +9,16 @@ interface Props {
 }
 
 const { parent, groups, currentHref } = Astro.props;
+const parentHref = `/${parent.slug}`;
+const inGroup = groups.some((group) => currentHref === group.href || currentHref.startsWith(`${group.href}/`));
+const parentCurrent = currentHref === parentHref || (currentHref.startsWith(`${parentHref}/`) && !inGroup);
 ---
 
-<nav class="docs-rail pr-2" aria-label={`Underkategorier i ${parent.name}`}>
+<nav class="docs-rail pr-2" aria-label={groups.length ? `Underkategorier i ${parent.name}` : parent.name}>
   <a
-    href={`/${parent.slug}`}
+    href={parentHref}
     class="eyebrow mb-5 block hover:text-ink"
-    aria-current={currentHref === `/${parent.slug}` ? 'page' : undefined}
+    aria-current={parentCurrent ? 'page' : undefined}
   >
     {parent.name}
   </a>

@@ -60,7 +60,9 @@ function walk(dir, files) {
     if (entry.name.startsWith(".") || entry.name === "sources") continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) walk(full, files);
-    else if (entry.name.endsWith(".md") && !/conflicted copy/i.test(entry.name)) files.push(full);
+    else if (entry.name.endsWith(".md") && entry.name !== "_index.md" && !/conflicted copy/i.test(entry.name)) {
+      files.push(full);
+    }
   }
 }
 

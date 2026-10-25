@@ -92,6 +92,7 @@ const schema = structuredData ?? {
       (() => {
         const storageKey = 'compass-theme';
         const root = document.documentElement;
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
         let stored = null;
 
         try {
@@ -107,7 +108,11 @@ const schema = structuredData ?? {
           });
         };
 
-        apply(stored === 'dark');
+        apply(stored ? stored === 'dark' : systemDark.matches);
+
+        systemDark.addEventListener('change', (event) => {
+          if (!stored) apply(event.matches);
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
           apply(root.classList.contains('dark'));

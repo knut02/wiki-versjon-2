@@ -79,8 +79,10 @@ export function linkify(body, bySlug) {
         const article = bySlug.get(slug);
         const text = label(alias || article?.title || slug.replaceAll("-", " "));
         if (!article) return `<span class="missing">${text}</span>`;
-        const section = article.subSlug || "oversikt";
-        return `[${text}](/${article.kategoriSlug}/${section}/${article.slug})`;
+        const href = article.subSlug
+          ? `/${article.kategoriSlug}/${article.subSlug}/${article.slug}`
+          : `/${article.kategoriSlug}/${article.slug}`;
+        return `[${text}](${href})`;
       });
     })
     .join("");
