@@ -1,12 +1,29 @@
 ---
-import { getDocHref, loadDocs } from "@/lib/docs";
+import { getDocHref, getDocSlug, loadDocs } from "@/lib/docs";
 
 export async function getStaticPaths() {
   const docs = await loadDocs();
-  return docs.map((doc) => ({
-    params: { slug: doc.id },
-    props: { destination: getDocHref(doc) },
-  }));
+  const counts = new Map();
+  for (const doc of docs) {
+    const slug = getDocSlug(doc);
+    counts.set(slug, (counts.get(slug) ?? 0) + 1);
+  }
+  const used = new Set();
+  const paths = [];
+  for (const doc of docs) {
+    const slug = getDocSlug(doc);
+    if (counts.get(slug) === 1 && !used.has(slug)) {
+      used.add(slug);
+      paths.push({ params: { slug }, props: { destination: getDocHref(doc) } });
+    }
+  }
+  for (const doc of docs) {
+    const legacy = doc.entry.data.legacySlug;
+    if (!legacy || used.has(legacy)) continue;
+    used.add(legacy);
+    paths.push({ params: { slug: legacy }, props: { destination: getDocHref(doc) } });
+  }
+  return paths;
 }
 
 return Astro.redirect(Astro.props.destination);

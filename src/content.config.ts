@@ -20,6 +20,8 @@ const artikler = defineCollection({
     subDescription: z.string(),
     tags: z.array(z.object({ name: z.string(), slug: z.string() })),
     links: z.array(z.string()),
+    slug: z.string(),
+    legacySlug: z.string().default(""),
   }),
 });
 

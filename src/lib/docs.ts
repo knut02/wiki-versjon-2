@@ -170,9 +170,14 @@ export function getCategoryHref(category: { parent: string; slug: string }) {
   return `/${category.parent}/${category.slug}`;
 }
 
+export function getDocSlug(doc: DocView) {
+  return doc.entry.data.slug;
+}
+
 export function getDocHref(doc: DocView) {
-  if (!doc.data.category) return `/${doc.data.parent}/${doc.id}`;
-  return `/${doc.data.parent}/${doc.data.category}/${doc.id}`;
+  const slug = getDocSlug(doc);
+  if (!doc.data.category) return `/${doc.data.parent}/${slug}`;
+  return `/${doc.data.parent}/${doc.data.category}/${slug}`;
 }
 
 export function getCategoryName(docs: DocView[], doc: DocView) {
@@ -247,7 +252,7 @@ export function getSidebarGroups(docs: DocView[], parentSlug: string): SidebarGr
     articles: getOrderedDocsForCategory(docs, parentSlug, category.slug).map((doc) => ({
       title: doc.data.title,
       href: getDocHref(doc),
-      slug: doc.id,
+      slug: getDocSlug(doc),
     })),
   }));
 }

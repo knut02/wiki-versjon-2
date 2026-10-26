@@ -1,20 +1,36 @@
 ---
 import ArticlePage from '@/components/docs/ArticlePage.astro';
-import { getCategories, loadDocs } from '@/lib/docs';
+import { getCategories, getDocHref, getDocSlug, loadDocs } from '@/lib/docs';
 
 export async function getStaticPaths() {
   const docs = await loadDocs();
   const reserved = new Set(getCategories(docs).map((category) => `${category.parent}/${category.slug}`));
+  const direct = docs.filter((doc) => !doc.data.category && !reserved.has(`${doc.data.parent}/${getDocSlug(doc)}`));
+  const taken = new Set(direct.map((doc) => `${doc.data.parent}/${getDocSlug(doc)}`));
 
-  return docs
-    .filter((doc) => !doc.data.category && !reserved.has(`${doc.data.parent}/${doc.id}`))
-    .map((doc) => ({
-      params: { category: doc.data.parent, slug: doc.id },
+  return [
+    ...direct.map((doc) => ({
+      params: { category: doc.data.parent, slug: getDocSlug(doc) },
       props: { id: doc.id },
-    }));
+    })),
+    ...direct.flatMap((doc) => {
+      const legacy = doc.entry.data.legacySlug;
+      if (!legacy || legacy === getDocSlug(doc)) return [];
+      const key = `${doc.data.parent}/${legacy}`;
+      if (taken.has(key) || reserved.has(key)) return [];
+      taken.add(key);
+      return [
+        {
+          params: { category: doc.data.parent, slug: legacy },
+          props: { destination: getDocHref(doc) },
+        },
+      ];
+    }),
+  ];
 }
 
-const { id } = Astro.props;
+const { id, destination } = Astro.props;
+if (destination) return Astro.redirect(destination);
 ---
 
 <ArticlePage id={id} />

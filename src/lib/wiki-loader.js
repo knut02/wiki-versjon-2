@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { linkify, parseArticle } from "./frontmatter.js";
+import { linkify, linkIndex, parseArticle } from "./frontmatter.js";
 import { slugify } from "./slug.js";
 
 const wikiRoot = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../wiki");
@@ -97,8 +97,39 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
   const files = [];
   walk(wikiRoot, files);
   const parsed = [];
-  const used = new Set();
+  const routeSlugs = new Map();
+  const globalSlugs = new Set();
   let skipped = 0;
+
+  const legacySlug = (base, parentName) => {
+    let slug = globalSlugs.has(base) ? `${parentName}-${base}` : base;
+    let suffix = 2;
+    while (globalSlugs.has(slug)) {
+      slug = `${parentName}-${base}-${suffix}`;
+      suffix += 1;
+    }
+    globalSlugs.add(slug);
+    return slug;
+  };
+
+  const takeRouteSlug = (route, base) => {
+    const used = routeSlugs.get(route) ?? new Set();
+    routeSlugs.set(route, used);
+    let slug = base;
+    let suffix = 2;
+    while (used.has(slug)) {
+      slug = `${base}-${suffix}`;
+      suffix += 1;
+    }
+    used.add(slug);
+    return slug;
+  };
+
+  const pathKey = (file) => {
+    const parts = path.relative(wikiRoot, file).split(path.sep);
+    const name = parts.pop().replace(/\.md$/i, "");
+    return [...parts.map((part) => slugify(part)), slugify(name)].join("/");
+  };
 
   for (const file of files) {
     if (!path.relative(wikiRoot, file).includes(path.sep)) {
@@ -116,28 +147,26 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
       throw error;
     }
     const base = slugify(path.basename(file, ".md"));
-    const parent = slugify(path.basename(path.dirname(file)));
-    let slug = used.has(base) ? `${parent}-${base}` : base;
-    let suffix = 2;
-    while (used.has(slug)) {
-      slug = `${parent}-${base}-${suffix}`;
-      suffix += 1;
-    }
-    used.add(slug);
-    const article = parseArticle(raw, slug);
+    const parentName = slugify(path.basename(path.dirname(file)));
+    const legacy = legacySlug(base, parentName);
+    const article = parseArticle(raw, base);
     if (!article) {
       skipped += 1;
       continue;
     }
     Object.assign(article, sections(file));
+    article.fileSlug = base;
+    article.pathKey = pathKey(file);
+    article.slug = takeRouteSlug(`${article.kategoriSlug}/${article.subSlug}`, base);
+    article.legacySlug = legacy === article.slug ? "" : legacy;
     parsed.push({ article, file, raw });
   }
 
-  const bySlug = new Map(parsed.map(({ article }) => [article.slug, article]));
+  const index = linkIndex(parsed.map(({ article }) => article));
   const ready = [];
 
   for (const { article, file, raw } of parsed) {
-    const body = linkify(article.body, bySlug);
+    const body = linkify(article.body, index);
     let rendered;
     try {
       rendered = await renderMarkdown(`\u200b\n${body}`, { fileURL: pathToFileURL(file) });
@@ -150,7 +179,7 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
     }
     rendered.html = demoteHeadings(rendered.html).replaceAll("\u200b", "");
     const data = await parseData({
-      id: article.slug,
+      id: article.pathKey,
       data: {
         title: article.title,
         description: article.description,
@@ -165,11 +194,13 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
         subDescription: article.subDescription,
         tags: article.tags,
         links: article.links,
+        slug: article.slug,
+        legacySlug: article.legacySlug,
       },
       filePath: file,
     });
     ready.push({
-      id: article.slug,
+      id: article.pathKey,
       data,
       body,
       filePath: path.relative(fileURLToPath(config.root), file).replaceAll("\\", "/"),
