@@ -10,7 +10,8 @@ export const siteConfig = {
   repository: "",
   editBaseUrl: "",
   action: { label: "Hjem", href: "/" },
-  footerText: "Artikler samlet fra wikien.",
+  footerText:
+    "Artiklene bygger på akademiske kilder, bøker, primærtekster og egne studier og refleksjoner. Kildene er skrevet av mennesker. Selve artiklene er i hovedsak skrevet av en KI-agent.",
   socials: [{ label: "RSS", href: "/rss.xml" }],
 };
 
