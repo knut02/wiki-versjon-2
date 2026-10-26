@@ -30,6 +30,13 @@ function field(frontmatter, key) {
   return match ? unquote(match[1]) : "";
 }
 
+function orderField(frontmatter) {
+  const value = field(frontmatter, "order");
+  if (!value) return null;
+  const order = Number(value);
+  return Number.isFinite(order) ? order : null;
+}
+
 function tags(value) {
   if (!value) return [];
   return value
@@ -61,6 +68,7 @@ export function parseArticle(raw, fallbackSlug) {
     sub: field(frontmatter, "sub-kategori"),
     tags: tags(field(frontmatter, "tags")),
     links: wikiLinks(body),
+    order: orderField(frontmatter),
     body,
   };
 }

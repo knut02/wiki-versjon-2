@@ -8,6 +8,7 @@ export type DocsParent = {
   description: string;
   count: number;
   icon: string;
+  order: number | null;
 };
 
 export type DocsCategory = {
@@ -106,9 +107,11 @@ export function getParents(docs: DocView[]): DocsParent[] {
       name: doc.entry.data.kategori,
       description: "",
       count: 0,
+      order: null,
     };
     current.count += 1;
     if (doc.entry.data.kategoriDescription) current.description = doc.entry.data.kategoriDescription;
+    if (doc.entry.data.kategoriOrder != null) current.order = doc.entry.data.kategoriOrder;
     parents.set(doc.data.parent, current);
   }
 
@@ -120,6 +123,7 @@ export function getParents(docs: DocView[]): DocsParent[] {
       description: parent.description,
       count: parent.count,
       icon: ICONS[index % ICONS.length],
+      order: parent.order,
     }));
 }
 

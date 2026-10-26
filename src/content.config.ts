@@ -13,6 +13,7 @@ const artikler = defineCollection({
     kategori: z.string(),
     kategoriSlug: z.string(),
     kategoriDescription: z.string(),
+    kategoriOrder: z.number().nullable(),
     sub: z.string(),
     subSlug: z.string(),
     subDescription: z.string(),

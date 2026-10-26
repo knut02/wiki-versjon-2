@@ -14,17 +14,19 @@ function sectionMeta(folder) {
   const indexPath = path.join(dir, "_index.md");
   let title = "";
   let description = "";
+  let order = null;
   if (fs.existsSync(indexPath)) {
     const parsed = parseArticle(fs.readFileSync(indexPath, "utf8"), "index");
     title = parsed?.title ?? "";
     description = parsed?.description ?? "";
+    order = parsed?.order ?? null;
   }
   if (!title) {
     const name = folder.at(-1) ?? "";
     title = name.replaceAll("-", " ");
     title = title.charAt(0).toLocaleUpperCase("nb") + title.slice(1);
   }
-  const meta = { title, description };
+  const meta = { title, description, order };
   sectionTitles.set(dir, meta);
   return meta;
 }
@@ -38,6 +40,7 @@ function sections(file) {
       kategori: "Uten kategori",
       kategoriSlug: "uten-kategori",
       kategoriDescription: "",
+      kategoriOrder: null,
       sub: "",
       subSlug: "",
       subDescription: "",
@@ -49,6 +52,7 @@ function sections(file) {
     kategori: topMeta.title,
     kategoriSlug: slugify(top),
     kategoriDescription: topMeta.description,
+    kategoriOrder: topMeta.order,
     sub: subMeta.title,
     subSlug: sub ? slugify(sub) : "",
     subDescription: subMeta.description,
@@ -118,6 +122,7 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
         kategori: article.kategori,
         kategoriSlug: article.kategoriSlug,
         kategoriDescription: article.kategoriDescription,
+        kategoriOrder: article.kategoriOrder,
         sub: article.sub,
         subSlug: article.subSlug,
         subDescription: article.subDescription,
