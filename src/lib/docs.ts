@@ -44,23 +44,28 @@ export type SearchSuggestion = {
   category: string;
 };
 
-const ICONS = [
-  "book-open",
-  "scroll-text",
-  "layers",
-  "folder",
-  "flag",
-  "compass",
-  "sparkles",
-  "life-buoy",
-  "inbox",
-  "layout-grid",
-  "blocks",
-  "plug",
-  "rocket",
-  "hash",
-  "message-circle",
-] as const;
+const CATEGORY_ICONS: Record<string, string> = {
+  "bibelen-det-nye-testamentet": "book-open",
+  "bibelen-det-gamle-testamentet": "scroll-text",
+  "lese-og-forsta-bibelen": "book-marked",
+  studieplaner: "list-checks",
+  "tro-og-liv": "heart",
+  kristologi: "cross",
+  teologi: "scale",
+  kirkehistorie: "church",
+  grunnleggende: "layers",
+  "kvinner-og-bibelen": "users",
+  "global-kristendom": "globe",
+  "verdensreligioner-og-livssyn": "languages",
+  personer: "user",
+  steder: "map-pin",
+  tidslinjer: "clock",
+  historie: "landmark",
+};
+
+function categoryIcon(slug: string) {
+  return CATEGORY_ICONS[slug] ?? "book-open";
+}
 
 const SEARCH_PREVIEW_MAX_CHARS = 160;
 
@@ -117,12 +122,12 @@ export function getParents(docs: DocView[]): DocsParent[] {
 
   return [...parents.values()]
     .sort((a, b) => a.name.localeCompare(b.name, "nb"))
-    .map((parent, index) => ({
+    .map((parent) => ({
       slug: parent.slug,
       name: parent.name,
       description: parent.description,
       count: parent.count,
-      icon: ICONS[index % ICONS.length],
+      icon: categoryIcon(parent.slug),
       order: parent.order,
     }));
 }
@@ -148,12 +153,12 @@ export function getCategories(docs: DocView[]): DocsCategory[] {
 
   return [...categories.values()]
     .sort((a, b) => a.name.localeCompare(b.name, "nb"))
-    .map((category, index) => ({
+    .map((category) => ({
       name: category.name,
       slug: category.slug,
       parent: category.parent,
       description: category.description,
-      icon: ICONS[index % ICONS.length],
+      icon: categoryIcon(category.parent),
     }));
 }
 
