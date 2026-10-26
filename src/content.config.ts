@@ -10,6 +10,7 @@ const artikler = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.string(),
+    modified: z.string().default(""),
     kategori: z.string(),
     kategoriSlug: z.string(),
     kategoriDescription: z.string(),

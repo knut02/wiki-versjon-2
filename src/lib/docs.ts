@@ -88,7 +88,7 @@ export function asDoc(entry: WikiEntry): DocView {
       category: entry.data.subSlug,
       parent: entry.data.kategoriSlug,
       tags: entry.data.tags.map((tag) => tag.name),
-      updatedAt: parseDate(entry.data.date),
+      updatedAt: parseDate(entry.data.modified) ?? parseDate(entry.data.date),
       hideFromSearch: false,
       relatedLinks: [],
       order: 100,

@@ -63,6 +63,7 @@ export function parseArticle(raw, fallbackSlug) {
     title,
     description: field(frontmatter, "description"),
     date: field(frontmatter, "date"),
+    modified: field(frontmatter, "modified"),
     kategori,
     kategoriSlug: slugify(kategori),
     sub: field(frontmatter, "sub-kategori"),
