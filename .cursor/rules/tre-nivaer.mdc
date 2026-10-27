@@ -1,0 +1,18 @@
+---
+description: Utsatt valg om tre mappenivåer i wikien. Ikke bygg det før Knut ber om det.
+alwaysApply: true
+---
+
+# Tre mappenivåer er ikke avklart
+
+Knut vurderer om wikien skal støtte tre nivåer: hovedkategori / underkategori / underkategori. Ikke implementer det før han ber om det.
+
+I dag leser systemet bare to nivåer. Toppmappen er hovedkategorien, mappen rett under er underkategorien. En dypere mappe blir ikke en egen kategori: filene vises på underkategorien, med adresse `/{hoved}/{under}/{artikkel}`.
+
+Hvis han ber om å sette det opp, hold det til nøyaktig tre nivåer. Vilkårlig dybde skal ikke inn.
+
+- Artikler som ligger der de ligger, beholder adressen. Bare filer i den tredje mappen får `/{hoved}/{under}/{under}/{artikkel}`.
+- Det tredje adresseleddet er i dag artikkelen. En tredjenivå-side har samme form, så én sidemal må avgjøre om leddet er mappe eller artikkel. Astro kan ikke ha to maler for den formen.
+- En fil og en mappe i samme mappe kan ikke få samme slug.
+- Gjenbruk mønsteret med underkategorikort og artikkelliste. Ikon følger hovedkategorien.
+- Steder som må endres: `sections()` i `src/lib/wiki-loader.js`, innholdsskjemaet, `getDocHref`, wikilenker, brødsmuler, sidemeny og kategorisidene.

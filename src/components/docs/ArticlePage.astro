@@ -37,6 +37,7 @@ const nextDoc = currentDocIndex >= 0 ? orderedDocs[currentDocIndex + 1] : undefi
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const editUrl = undefined;
 const readingTime = getReadingTime(doc.body);
+const backlinks = doc.entry.data.backlinks ?? [];
 const pageUrl = new URL(getDocHref(doc), siteConfig.siteUrl).toString();
 const pageMarkdown = [`# ${doc.data.title}`, doc.data.description && `> ${doc.data.description}`, doc.body?.trim()]
   .filter(Boolean)
@@ -137,6 +138,23 @@ const structuredData = [
     <div class="prose mt-8">
       <Content components={mdxComponents} />
     </div>
+
+    {backlinks.length > 0 && (
+      <section class="mt-14" data-pagefind-ignore>
+        <h2 class="text-base font-semibold">Nevnt i</h2>
+        <div class="panel mt-4 overflow-hidden">
+          {backlinks.map((link) => (
+            <a href={link.href} class="row-link group">
+              <span class="min-w-0 flex-1">
+                <span class="block font-semibold text-ink transition-colors group-hover:text-accent-ink">{link.title}</span>
+                <span class="mt-1 block text-sm leading-6 text-muted">{link.section}</span>
+              </span>
+              <Icon name="arrow-right" class="row-link-arrow size-4" />
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     {doc.data.relatedLinks.length > 0 && (
       <section class="mt-14" data-pagefind-ignore>

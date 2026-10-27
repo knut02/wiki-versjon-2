@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { linkify, linkIndex, parseArticle } from "./frontmatter.js";
+import { backlinksByArticle, linkify, linkIndex, parseArticle } from "./frontmatter.js";
 import { slugify } from "./slug.js";
 
 const wikiRoot = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../wiki");
@@ -162,7 +162,9 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
     parsed.push({ article, file, raw });
   }
 
-  const index = linkIndex(parsed.map(({ article }) => article));
+  const articles = parsed.map(({ article }) => article);
+  const index = linkIndex(articles);
+  const backlinks = backlinksByArticle(articles, index);
   const ready = [];
 
   for (const { article, file, raw } of parsed) {
@@ -196,6 +198,7 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
         links: article.links,
         slug: article.slug,
         legacySlug: article.legacySlug,
+        backlinks: backlinks.get(article.pathKey) ?? [],
       },
       filePath: file,
     });

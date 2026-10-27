@@ -52,6 +52,47 @@ export function wikiLinks(markdown) {
   return [...new Set(slugs)];
 }
 
+export function articleHref(article) {
+  return article.subSlug
+    ? `/${article.kategoriSlug}/${article.subSlug}/${article.slug}`
+    : `/${article.kategoriSlug}/${article.slug}`;
+}
+
+function linkedArticles(body, index) {
+  const seen = new Set();
+  const articles = [];
+  for (const part of body.split(/(```[\s\S]*?```)/g)) {
+    if (part.startsWith("```")) continue;
+    for (const match of part.matchAll(WIKI_LINK)) {
+      const article = resolveArticle(match[1], index);
+      if (!article || seen.has(article.pathKey)) continue;
+      seen.add(article.pathKey);
+      articles.push(article);
+    }
+  }
+  return articles;
+}
+
+export function backlinksByArticle(articles, index) {
+  const incoming = new Map();
+  for (const article of articles) {
+    for (const target of linkedArticles(article.body, index)) {
+      if (target.pathKey === article.pathKey) continue;
+      const list = incoming.get(target.pathKey) ?? [];
+      list.push({
+        title: article.title,
+        href: articleHref(article),
+        section: article.subSlug ? article.sub : article.kategori,
+      });
+      incoming.set(target.pathKey, list);
+    }
+  }
+  for (const list of incoming.values()) {
+    list.sort((a, b) => a.title.localeCompare(b.title, "nb") || a.href.localeCompare(b.href, "nb"));
+  }
+  return incoming;
+}
+
 function unquote(value) {
   const trimmed = value.trim();
   if (
@@ -125,10 +166,7 @@ export function linkify(body, index) {
         const article = resolveArticle(target, index);
         const text = label(alias || article?.title || wikiSlug(target).replaceAll("-", " "));
         if (!article) return `<span class="missing">${text}</span>`;
-        const href = article.subSlug
-          ? `/${article.kategoriSlug}/${article.subSlug}/${article.slug}`
-          : `/${article.kategoriSlug}/${article.slug}`;
-        return `[${text}](${href})`;
+        return `[${text}](${articleHref(article)})`;
       });
     })
     .join("");
