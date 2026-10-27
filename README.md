@@ -19,9 +19,17 @@ Kategorier kommer fra mapper, ikke fra frontmatter-feltene `kategori` og `sub-ka
 - Toppmappen er hovedkategori. Navn og beskrivelse hentes fra den mappens `_index.md` (`title` og `description`). Mangler tittel, brukes mappenavnet.
 - Undermappen er underkategori, med beskrivelse fra den mappens `_index.md`.
 - En fil som ligger direkte i en toppmappe hører til hovedkategorien. Det lages ingen underkategori for den.
-- `_index.md` brukes bare som navn og beskrivelse for mappen, og blir ikke en egen artikkel.
+- `_index.md` brukes bare som navn og beskrivelse for mappen, og blir ikke en egen artikkel. I en toppmappe leses også `order`. Lavest tall sorteres først på forsiden. Uten `order` kommer kategorien sist. Andre lister, inkludert menyen, er alfabetiske.
 
-Slug lages med små bokstaver. `æ` blir `ae`, `ø` blir `o`, `å` blir `a`. Wikilenker på formen `[[sti/filnavn]]` eller `[[sti/filnavn|alias]]` peker til artikkelen med det slugifiserte filnavnet.
+Slug lages med små bokstaver. `æ` blir `ae`, `ø` blir `o`, `å` blir `a`.
+
+`id` i frontmatter er valgfritt og slugifiseres på samme måte. En wikilenke uten skråstrek, `[[frelse]]` eller `[[frelse|alias]]`, slås opp på `id` først. Treffer den, brukes den artikkelen uansett hvilken mappe filen ligger i. To artikler med samme `id` holdes utenfor oppslaget. Artikler uten `id` påvirkes ikke.
+
+Lenker med skråstrek, `[[sti/filnavn]]` eller `[[sti/filnavn|alias]]`, slås opp på mappesti og filnavn. Først en sti som treffer nøyaktig, deretter en sti som er et entydig suffiks, og til slutt et filnavn som bare finnes én gang.
+
+Datoen «Oppdatert» kommer fra `modified`. Mangler feltet, eller kan det ikke leses, brukes `date`.
+
+Artikler som lenker hit, samles under innlesing og vises som «Nevnt i» nederst på artikkelsiden. Seksjonen vises bare når minst én lenke treffer.
 
 ## Adresser
 
@@ -36,7 +44,7 @@ Slug lages med små bokstaver. `æ` blir `ae`, `ø` blir `o`, `å` blir `a`. Wik
 
 Eldre adresser videresendes: `/artikkel/{slug}`, `/kategori/{slug}` og `/kategori/{slug}/{underkategori}`. Artikler som tidligere lå under den oppdiktede bolken `oversikt` videresendes fra `/{kategori}/oversikt/{artikkel}`.
 
-Forsiden viser hovedkategoriene. Underkategoriene vises på kategorisiden. Artikler som ligger rett i toppmappen vises der også. Taggene på en artikkel lenker til taggsiden.
+Forsiden viser hovedkategoriene i den rekkefølgen `order` gir. Underkategoriene vises på kategorisiden. Artikler som ligger rett i toppmappen vises der også. Taggene på en artikkel lenker til taggsiden.
 
 «Utvalg» under søkefeltet er de fire første artiklene i alfabetisk rekkefølge. Antall og eventuell avgrensning styres av `popular` i `src/config/home.ts`.
 
