@@ -22,6 +22,7 @@ const artikler = defineCollection({
     links: z.array(z.string()),
     slug: z.string(),
     legacySlug: z.string().default(""),
+    id: z.string().default(""),
     backlinks: z
       .array(z.object({ title: z.string(), href: z.string(), section: z.string() }))
       .default([]),

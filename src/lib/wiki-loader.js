@@ -164,6 +164,9 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
 
   const articles = parsed.map(({ article }) => article);
   const index = linkIndex(articles);
+  if (index.duplicateIds.length) {
+    logger.warn(`Like id-er brukes ikke i oppslag: ${index.duplicateIds.join(", ")}`);
+  }
   const backlinks = backlinksByArticle(articles, index);
   const ready = [];
 
@@ -198,6 +201,7 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
         links: article.links,
         slug: article.slug,
         legacySlug: article.legacySlug,
+        id: article.id,
         backlinks: backlinks.get(article.pathKey) ?? [],
       },
       filePath: file,

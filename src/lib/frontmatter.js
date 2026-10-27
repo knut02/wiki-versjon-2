@@ -20,18 +20,28 @@ export function linkPath(target) {
 export function linkIndex(articles) {
   const byPath = new Map();
   const byLeaf = new Map();
+  const byId = new Map();
+  const duplicateIds = new Set();
   for (const article of articles) {
     byPath.set(article.pathKey, article);
     const list = byLeaf.get(article.fileSlug) ?? [];
     list.push(article);
     byLeaf.set(article.fileSlug, list);
+    if (!article.id) continue;
+    if (byId.has(article.id) || duplicateIds.has(article.id)) {
+      byId.delete(article.id);
+      duplicateIds.add(article.id);
+      continue;
+    }
+    byId.set(article.id, article);
   }
-  return { byPath, byLeaf };
+  return { byPath, byLeaf, byId, duplicateIds: [...duplicateIds] };
 }
 
 export function resolveArticle(target, index) {
   const key = linkPath(target);
   if (!key) return null;
+  if (!key.includes("/") && index.byId?.has(key)) return index.byId.get(key);
   const exact = index.byPath.get(key);
   if (exact) return exact;
   const suffix = [];
@@ -137,6 +147,7 @@ export function parseArticle(raw, fallbackSlug) {
   const title = field(frontmatter, "title");
   if (!title) return null;
   const kategori = field(frontmatter, "kategori") || "Uten kategori";
+  const rawId = field(frontmatter, "id");
   return {
     slug: fallbackSlug,
     title,
@@ -149,6 +160,7 @@ export function parseArticle(raw, fallbackSlug) {
     tags: tags(field(frontmatter, "tags")),
     links: wikiLinks(body),
     order: orderField(frontmatter),
+    id: rawId ? slugify(rawId) : "",
     body,
   };
 }
