@@ -79,6 +79,12 @@ const currentParent = parents.find((parent) => isActive(`/${parent.slug}`));
           );
         })
       }
+      <a href="/tag" class="category-menu-link sm:col-span-2" aria-current={pathname === "/tag" ? "page" : undefined}>
+        <span class="min-w-0">
+          <span class="block truncate">Alle tags</span>
+        </span>
+        <Icon name="arrow-right" class="size-4 shrink-0 text-faint" />
+      </a>
     </nav>
   </div>
 

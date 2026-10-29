@@ -109,7 +109,7 @@ export type DocsTag = {
   count: number;
 };
 
-export function getPopularTags(docs: DocView[], limit = 10): DocsTag[] {
+function collectTags(docs: DocView[]): DocsTag[] {
   const tags = new Map<string, Map<string, number>>();
 
   for (const doc of docs) {
@@ -120,13 +120,18 @@ export function getPopularTags(docs: DocView[], limit = 10): DocsTag[] {
     }
   }
 
-  return [...tags.entries()]
-    .map(([slug, names]) => {
-      const [name, count] = [...names.entries()].sort(
-        (a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nb"),
-      )[0];
-      return { slug, name, count: [...names.values()].reduce((sum, value) => sum + value, 0) || count };
-    })
+  return [...tags.entries()].map(([slug, names]) => {
+    const [name, count] = [...names.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nb"))[0];
+    return { slug, name, count: [...names.values()].reduce((sum, value) => sum + value, 0) || count };
+  });
+}
+
+export function getTags(docs: DocView[]): DocsTag[] {
+  return collectTags(docs).sort((a, b) => a.name.localeCompare(b.name, "nb") || a.slug.localeCompare(b.slug));
+}
+
+export function getPopularTags(docs: DocView[], limit = 10): DocsTag[] {
+  return collectTags(docs)
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "nb"))
     .slice(0, limit);
 }
