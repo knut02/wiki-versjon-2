@@ -13,10 +13,10 @@ Ferdig: Pagefind hopper over mappen `dist/tag` mens indeksen lages, og legger de
 
 Ferdig: alle adresser under `/artikkel/` er fjernet, både de 544 entydige filnavnene og de 34 eldre navnene. De samme 34 eldre navnene inne i kategorien, som `/personer/gt/gt-abraham`, er også fjernet. De 17 oppdiktede `/{kategori}/oversikt/{artikkel}`-adressene er fjernet. De 65 videresendingene `/kategori/{hoved}/{under}` er fjernet. Ikke legg dem tilbake. En ekte mappe som heter `oversikt` er fortsatt en underkategori. De 16 adressene `/kategori/{hoved}` er fortsatt sider.
 
-Ferdig: taggsidene `/tag/{slug}` får artikkellisten ferdig når sidene opprettes. Filen inneholder taggnavnet og lenkene. Topptekst, bunntekst og søkefelt skrives ikke inn der. Taggmenyen og «Alle tags» blir værende.
+Ferdig: taggsidene `/tag/{slug}` får artikkellisten ferdig når sidene opprettes. Filen inneholder taggnavnet, lenkene og nettstedets standard topptekst, inkludert søk. Tilbakeknappen er fjernet. Bunntekst skrives ikke inn der. Taggmenyen og «Alle tags» blir værende.
 
 Gjenstår:
 
-1. Tag-side endringer. Knut er usikker på hvordan de lette taggsidene ser ut, inkludert tilbakeknappen. Ikke endre utseendet før han ber om det.
+1. Tag-side endringer. Toppteksten er den vanlige, og tilbakeknappen er borte. Knut er fortsatt usikker på resten av utseendet. Ikke endre mer, og ikke legg inn bunntekst, før han ber om det.
 2. De 16 gjenstående adressene `/kategori/{hoved}` kan enten fjernes eller legges som videresending i Cloudflare. Ikke gjenopprett `/artikkel/…`, `/kategori/{hoved}/{under}`, de eldre navnene inne i kategorien, eller oppdiktede `/{kategori}/oversikt/{artikkel}`.
 3. Ta vare på Astros mellomlager mellom bygg på Cloudflare, slik at uendrede markdown-filer ikke gjengis på nytt.
