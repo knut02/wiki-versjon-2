@@ -78,7 +78,7 @@ npm run preview
 - Temaet følger enhetens lys- eller mørkmodus. Et eget valg lagres i `localStorage` under nøkkelen `compass-theme`
 - `@/` peker på `src/`
 
-Nettstedets navn, beskrivelse og `siteUrl` ligger i `src/config/site.ts`. `siteUrl` står nå til `http://localhost:4173` og må oppdateres før publisering, ellers blir kanoniske lenker, RSS og sitemap feil.
+Nettstedets navn, beskrivelse og `siteUrl` ligger i `src/config/site.ts`. `siteUrl` er `https://test.enkeltro.no` inntil siden slippes. Den adressen brukes i kanoniske lenker, RSS og sitemap.
 
 ## Publisering
 
@@ -93,4 +93,4 @@ Koble repoet i Cloudflare: workeren → **Settings** → **Builds** → **Connec
 
 Cloudflare kloner bare GitHub-repoet. Wiki-mappen ligger utenfor repoet, så et bygg der har ingen artikler. Wikien må ligge i et git-repo som bygget kan hente, for eksempel som egen repo med submodule, før push-bygget kan fylle siden. Lokalt leser appen fortsatt `../wiki`.
 
-`siteUrl` i `src/config/site.ts` må peke på den offentlige adressen, ellers blir kanoniske lenker, RSS og sitemap feil.
+`siteUrl` i `src/config/site.ts` peker på `https://test.enkeltro.no`. Bytt den når siden får den endelige adressen.

@@ -2,7 +2,8 @@ export const siteConfig = {
   name: "Studie",
   title: "Studie",
   description: "Artikler og notater, sortert etter kategori.",
-  siteUrl: "http://localhost:4173",
+  /** Midlertidig adresse. Byttes når siden slippes. */
+  siteUrl: "https://test.enkeltro.no",
   /** Standardspråk. Et nytt språk er en fil i src/i18n/ som registreres i src/i18n/index.ts. */
   language: "nb",
   locale: "nb_NO",
