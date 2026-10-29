@@ -1,43 +1,63 @@
 ---
-import PaginatedArticleList from "@/components/PaginatedArticleList.astro";
-import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
-import Icon from "@/components/ui/Icon.astro";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getDocHref, loadDocs } from "@/lib/docs";
+import "@/styles/global.css";
+import { siteConfig } from "@/config/site";
+import { getDocHref, getTags, loadDocs } from "@/lib/docs";
+
+interface ArticleLink {
+  title: string;
+  href: string;
+}
+
+interface Props {
+  name: string;
+  articles: ArticleLink[];
+}
 
 export async function getStaticPaths() {
   const docs = await loadDocs();
-  const slugs = new Set(docs.flatMap((doc) => doc.entry.data.tags.map((tag) => tag.slug)));
-  return [...slugs].map((slug) => ({ params: { slug } }));
+  const groups = new Map<string, Props>(getTags(docs).map((tag) => [tag.slug, { name: tag.name, articles: [] }]));
+
+  for (const doc of docs) {
+    const article = { title: doc.data.title, href: getDocHref(doc) };
+    const seen = new Set<string>();
+    for (const tag of doc.entry.data.tags) {
+      if (seen.has(tag.slug)) continue;
+      seen.add(tag.slug);
+      groups.get(tag.slug)?.articles.push(article);
+    }
+  }
+
+  return [...groups].map(([slug, props]) => ({ params: { slug }, props }));
 }
 
-const docs = await loadDocs();
-const slug = Astro.params.slug ?? "";
-const name = docs.flatMap((doc) => doc.entry.data.tags).find((tag) => tag.slug === slug)?.name ?? slug;
-const articles = docs.filter((doc) => doc.entry.data.tags.some((tag) => tag.slug === slug));
+const { name, articles } = Astro.props;
+const pageTitle = `${name} | ${siteConfig.name}`;
 ---
 
-<BaseLayout title={name} description={`Tagg · ${name}`}>
-  <div class="shell shell-narrow py-12 md:py-16">
-    <Breadcrumbs items={[{ label: "Hjem", href: "/" }, { label: "Alle tags", href: "/tag" }, { label: name }]} />
-    <header class="mt-6 border-b border-line pb-8">
-      <p class="eyebrow">Tagg</p>
+<!doctype html>
+<html lang={siteConfig.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={`Tagg · ${name}`} />
+  </head>
+  <body>
+    <main class="shell shell-narrow py-12 md:py-16">
+      <a href="/tag" class="eyebrow">Alle tags</a>
       <h1 class="mt-3 text-[2.15rem] leading-[1.15] font-bold tracking-[-0.035em] md:text-[2.6rem]">{name}</h1>
       <p class="docs-meta mt-5">
-        <span class="docs-meta-item">
-          <Icon name="file-text" class="size-[0.9rem]" />
-          {`${articles.length} ${articles.length === 1 ? "artikkel" : "artikler"}`}
-        </span>
+        {articles.length} {articles.length === 1 ? "artikkel" : "artikler"}
       </p>
-    </header>
-    <div class="mt-8">
-      <PaginatedArticleList
-        items={articles.map((doc) => ({
-          title: doc.data.title,
-          description: doc.data.description,
-          href: getDocHref(doc),
-        }))}
-      />
-    </div>
-  </div>
-</BaseLayout>
+      <div class="panel mt-8 overflow-hidden">
+        {
+          articles.map((article) => (
+            <a href={article.href} class="row-link">
+              <span class="min-w-0 flex-1 font-semibold text-ink">{article.title}</span>
+            </a>
+          ))
+        }
+      </div>
+    </main>
+  </body>
+</html>
