@@ -42,7 +42,7 @@ Artikler som lenker hit, samles under innlesing og vises som «Nevnt i» nederst
 | Artikkel i hovedkategorien | `/{kategori}/{artikkel}` |
 | Tagg | `/tag/{tagg}` |
 
-Eldre adresser videresendes: `/artikkel/{slug}`, `/kategori/{slug}` og `/kategori/{slug}/{underkategori}`. Artikler som tidligere lå under den oppdiktede bolken `oversikt` videresendes fra `/{kategori}/oversikt/{artikkel}`.
+Eldre adresser videresendes: `/kategori/{slug}` for hovedkategoriene. `/kategori/{slug}/{underkategori}`, adresser under `/artikkel/` og den oppdiktede bolken `/{kategori}/oversikt/{artikkel}` er tatt bort.
 
 Forsiden viser hovedkategoriene i den rekkefølgen `order` gir. Underkategoriene vises på kategorisiden. Artikler som ligger rett i toppmappen vises der også. Taggene på en artikkel lenker til taggsiden.
 

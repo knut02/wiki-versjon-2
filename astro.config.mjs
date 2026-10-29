@@ -12,7 +12,12 @@ export default defineConfig({
   site: siteConfig.siteUrl,
   trailingSlash: "never",
   server: { port: 4173 },
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => !page.endsWith("/search-previews.json"),
+    }),
+  ],
   markdown: {
     shikiConfig: {
       themes: {

@@ -2,10 +2,9 @@
 import SearchDialog from '@/components/chrome/SearchDialog.astro';
 import SiteFooter from '@/components/chrome/SiteFooter.astro';
 import SiteHeader from '@/components/chrome/SiteHeader.astro';
-import SearchPreviews from '@/components/SearchPreviews.astro';
 import { home } from '@/config/home';
 import { siteConfig } from '@/config/site';
-import { getSearchPreviewLookup, getSuggestedSearchArticles, loadDocs } from '@/lib/docs';
+import { getSuggestedSearchArticles, loadDocs } from '@/lib/docs';
 import '@/styles/global.css';
 
 interface Props {
@@ -30,9 +29,7 @@ const pageTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
 const canonical = new URL(Astro.url.pathname, siteConfig.siteUrl).toString();
 const socialImage = new URL(siteConfig.socialImage, siteConfig.siteUrl).toString();
 
-const publicDocs = await loadDocs();
-const searchPreviews = getSearchPreviewLookup(publicDocs);
-const searchSuggestions = getSuggestedSearchArticles(publicDocs, {
+const searchSuggestions = getSuggestedSearchArticles(await loadDocs(), {
   limit: 5,
   categories: home.popular.categories,
 });
@@ -139,7 +136,6 @@ const schema = structuredData ?? {
       <slot />
     </main>
     <SiteFooter />
-    <SearchPreviews previews={searchPreviews} />
     <SearchDialog suggestions={searchSuggestions} />
   </body>
 </html>

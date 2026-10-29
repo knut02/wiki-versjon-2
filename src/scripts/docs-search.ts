@@ -38,10 +38,10 @@ type SearchElements = {
 const MAX_RESULTS = 8;
 const SEARCH_DEBOUNCE_MS = 150;
 const PAGEFIND_BUNDLE_URL = '/pagefind/pagefind.js';
-const SEARCH_PREVIEWS_SCRIPT_ID = 'docs-search-previews';
+const SEARCH_PREVIEWS_URL = '/search-previews.json';
 
 let pagefindPromise: Promise<PagefindApi | null> | undefined;
-let searchPreviewsCache: Record<string, string> | undefined;
+let searchPreviewsPromise: Promise<Record<string, string>> | undefined;
 let searchShortcutsBound = false;
 
 const stripTags = (value: string) => value.replace(/<[^>]*>/g, '').trim();
@@ -150,6 +150,7 @@ const openSearchDialog = () => {
   const dialog = getSearchDialog();
   if (!dialog || dialog.open) return;
 
+  void getSearchPreviews();
   const input = dialog.querySelector<HTMLInputElement>('[data-search-input]');
   dialog.showModal();
   if (input) {
@@ -319,22 +320,18 @@ const getSuggestions = (root: HTMLElement): SearchEntry[] => {
 };
 
 const getSearchPreviews = () => {
-  if (searchPreviewsCache) return searchPreviewsCache;
-
-  const previews = document.getElementById(SEARCH_PREVIEWS_SCRIPT_ID);
-  if (!(previews instanceof HTMLScriptElement) || !previews.textContent) {
-    searchPreviewsCache = {};
-    return searchPreviewsCache;
+  if (!searchPreviewsPromise) {
+    searchPreviewsPromise = fetch(SEARCH_PREVIEWS_URL)
+      .then(async (response) => {
+        if (!response.ok) return {};
+        const parsed = (await response.json()) as unknown;
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+        return parsed as Record<string, string>;
+      })
+      .catch(() => ({}));
   }
 
-  try {
-    const parsed = JSON.parse(previews.textContent) as Record<string, string>;
-    searchPreviewsCache = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
-  } catch {
-    searchPreviewsCache = {};
-  }
-
-  return searchPreviewsCache;
+  return searchPreviewsPromise;
 };
 
 const renderSuggestions = (
@@ -356,12 +353,11 @@ const renderSuggestions = (
   );
 };
 
-const searchPagefind = async (
-  query: string,
-  searchPreviews: Record<string, string>,
-): Promise<SearchEntry[] | null | undefined> => {
+const searchPagefind = async (query: string): Promise<SearchEntry[] | null | undefined> => {
   const pagefind = await getPagefind();
   if (!pagefind) return null;
+
+  const searchPreviews = await getSearchPreviews();
 
   const search = await pagefind.debouncedSearch(query, {}, SEARCH_DEBOUNCE_MS);
   if (!search) return undefined;
@@ -392,7 +388,6 @@ const attachSearch = (root: HTMLElement) => {
   const { input, results, status } = elements;
   const emptyMessage = root.dataset.searchEmpty ?? 'No matching articles found.';
   const errorMessage = root.dataset.searchError ?? 'Search is temporarily unavailable.';
-  const searchPreviews = getSearchPreviews();
   const isDialog = root.dataset.searchMode === 'dialog';
   let latestQuery = '';
   let activeResultIndex = -1;
@@ -446,7 +441,7 @@ const attachSearch = (root: HTMLElement) => {
       return;
     }
 
-    const matches = await searchPagefind(query, searchPreviews);
+    const matches = await searchPagefind(query);
     if (query !== latestQuery) return;
 
     if (matches === undefined) {
@@ -472,6 +467,7 @@ const attachSearch = (root: HTMLElement) => {
 
   input.addEventListener('focus', () => {
     void getPagefind();
+    void getSearchPreviews();
     if (!input.value.trim()) {
       renderSuggestions(root, input, results, status);
       clearActiveResult();

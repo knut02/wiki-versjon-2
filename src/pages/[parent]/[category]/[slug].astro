@@ -1,50 +1,23 @@
 ---
 import ArticlePage from '@/components/docs/ArticlePage.astro';
-import { getDocHref, getDocSlug, loadDocs } from '@/lib/docs';
+import { getDocSlug, loadDocs } from '@/lib/docs';
 
 export async function getStaticPaths() {
   const docs = await loadDocs();
-  const nested = docs.filter((doc) => doc.data.category);
-  const taken = new Set(nested.map((doc) => `${doc.data.parent}/${doc.data.category}/${getDocSlug(doc)}`));
 
-  return [
-    ...nested.map((doc) => ({
+  return docs
+    .filter((doc) => doc.data.category)
+    .map((doc) => ({
       params: {
         parent: doc.data.parent,
         category: doc.data.category,
         slug: getDocSlug(doc),
       },
       props: { id: doc.id },
-    })),
-    ...docs.flatMap((doc) => {
-      const legacy = doc.entry.data.legacySlug || getDocSlug(doc);
-      if (doc.data.category) {
-        if (!doc.entry.data.legacySlug || doc.entry.data.legacySlug === getDocSlug(doc)) return [];
-        const key = `${doc.data.parent}/${doc.data.category}/${doc.entry.data.legacySlug}`;
-        if (taken.has(key)) return [];
-        taken.add(key);
-        return [
-          {
-            params: { parent: doc.data.parent, category: doc.data.category, slug: doc.entry.data.legacySlug },
-            props: { destination: getDocHref(doc) },
-          },
-        ];
-      }
-      const key = `${doc.data.parent}/oversikt/${legacy}`;
-      if (taken.has(key)) return [];
-      taken.add(key);
-      return [
-        {
-          params: { parent: doc.data.parent, category: 'oversikt', slug: legacy },
-          props: { destination: getDocHref(doc) },
-        },
-      ];
-    }),
-  ];
+    }));
 }
 
-const { id, destination } = Astro.props;
-if (destination) return Astro.redirect(destination);
+const { id } = Astro.props;
 ---
 
 <ArticlePage id={id} />
