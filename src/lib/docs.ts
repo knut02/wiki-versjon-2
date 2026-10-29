@@ -242,7 +242,7 @@ export function getSuggestedSearchArticles(
 ): SearchSuggestion[] {
   const allowed = new Set(categories);
   const visible = docs.filter((doc) => !doc.data.hideFromSearch);
-  const filtered = allowed.size ? visible.filter((doc) => allowed.has(doc.data.category)) : visible;
+  const filtered = allowed.size ? visible.filter((doc) => allowed.has(doc.data.parent)) : visible;
   const chosen = (filtered.length ? filtered : visible).slice(0, limit);
 
   return chosen.map((doc) => ({

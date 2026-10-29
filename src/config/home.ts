@@ -7,7 +7,7 @@ export const home = {
   },
   popular: {
     label: "Utvalg",
-    categories: [] as string[],
+    categories: ["tro-og-liv", "lese-og-forsta-bibelen", "kvinner-og-bibelen"],
     limit: 4,
   },
   recent: {
