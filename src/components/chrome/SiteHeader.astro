@@ -2,9 +2,11 @@
 import Icon from '@/components/ui/Icon.astro';
 import Logomark from '@/components/ui/Logomark.astro';
 import { siteConfig } from '@/config/site';
-import { getParents, loadDocs } from '@/lib/docs';
+import { getParents, getPopularTags, loadDocs } from '@/lib/docs';
 
-const parents = getParents(await loadDocs());
+const docs = await loadDocs();
+const parents = getParents(docs);
+const popularTags = getPopularTags(docs, 10);
 const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 const currentParent = parents.find((parent) => isActive(`/${parent.slug}`));
@@ -47,12 +49,37 @@ const currentParent = parents.find((parent) => isActive(`/${parent.slug}`));
         <Icon name="sun" class="icon-sun size-[1.15rem]" />
       </button>
 
+      <button type="button" class="button button-secondary category-toggle" popovertarget="tag-menu">
+        Tags
+        <Icon name="chevron-down" class="category-toggle-icon size-4" />
+      </button>
       <button type="button" class="button button-secondary category-toggle" popovertarget="category-menu">
         <Icon name="layout-grid" class="size-4" />
         Kategorier
         <Icon name="chevron-down" class="category-toggle-icon size-4" />
       </button>
     </div>
+  </div>
+
+  <div id="tag-menu" popover="auto" class="category-menu">
+    <nav class="shell grid gap-1 py-4 sm:grid-cols-2" aria-label="Vanlige tagger">
+      {
+        popularTags.map((tag) => {
+          const href = `/tag/${tag.slug}`;
+          return (
+            <a href={href} class="category-menu-link" aria-current={pathname === href ? 'page' : undefined}>
+              <span class="min-w-0">
+                <span class="block truncate">{tag.name}</span>
+                <span class="mt-0.5 block text-xs font-normal text-muted">
+                  {tag.count} {tag.count === 1 ? 'artikkel' : 'artikler'}
+                </span>
+              </span>
+              <Icon name="arrow-right" class="size-4 shrink-0 text-faint" />
+            </a>
+          );
+        })
+      }
+    </nav>
   </div>
 
   <div id="category-menu" popover="auto" class="category-menu">

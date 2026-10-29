@@ -103,6 +103,34 @@ export async function loadDocs() {
     .sort((a, b) => a.data.title.localeCompare(b.data.title, "nb"));
 }
 
+export type DocsTag = {
+  slug: string;
+  name: string;
+  count: number;
+};
+
+export function getPopularTags(docs: DocView[], limit = 10): DocsTag[] {
+  const tags = new Map<string, Map<string, number>>();
+
+  for (const doc of docs) {
+    for (const tag of doc.entry.data.tags) {
+      const names = tags.get(tag.slug) ?? new Map<string, number>();
+      names.set(tag.name, (names.get(tag.name) ?? 0) + 1);
+      tags.set(tag.slug, names);
+    }
+  }
+
+  return [...tags.entries()]
+    .map(([slug, names]) => {
+      const [name, count] = [...names.entries()].sort(
+        (a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nb"),
+      )[0];
+      return { slug, name, count: [...names.values()].reduce((sum, value) => sum + value, 0) || count };
+    })
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "nb"))
+    .slice(0, limit);
+}
+
 export function getParents(docs: DocView[]): DocsParent[] {
   const parents = new Map<string, DocsParent & { count: number }>();
 
