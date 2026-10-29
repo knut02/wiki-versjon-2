@@ -1,6 +1,7 @@
 ---
 import DocsSidebar from '@/components/layout/DocsSidebar.astro';
 import TableOfContents from '@/components/layout/TableOfContents.astro';
+import { ui } from '@/i18n';
 import Icon from '@/components/ui/Icon.astro';
 import { getSidebarGroups, loadDocs, type DocsParent } from '@/lib/docs';
 import BaseLayout from './BaseLayout.astro';
@@ -29,7 +30,7 @@ const hasToc = headings.length > 0;
       <div class="shell">
         <details class="docs-mobile-toc">
           <summary class="flex cursor-pointer list-none items-center gap-3 py-3 text-sm">
-            <span class="shrink-0 font-semibold text-ink">På denne siden</span>
+            <span class="shrink-0 font-semibold text-ink">{ui.toc.onThisPage}</span>
             <Icon name="chevron-right" class="size-3.5 shrink-0 text-faint" />
             <span class="docs-mobile-toc-current min-w-0" data-mobile-toc-current>
               {headings[0].text}

@@ -1,3 +1,5 @@
+import { ui } from '@/i18n';
+
 type PagefindSearchResultData = {
   url: string;
   excerpt?: string;
@@ -245,7 +247,7 @@ const renderResults = (
   results: HTMLDivElement,
   status: HTMLElement | null,
   entries: SearchEntry[],
-  label = 'Search results',
+  label = ui.search.results,
   query = '',
 ) => {
   const heading = document.createElement('p');
@@ -304,7 +306,7 @@ const renderResults = (
 
   results.replaceChildren(heading, list);
   setResultsVisibility(input, results, true);
-  announceStatus(status, `${entries.length} ${entries.length === 1 ? 'result' : 'results'} available.`);
+  announceStatus(status, ui.search.resultCount(entries.length));
 };
 
 const getSuggestions = (root: HTMLElement): SearchEntry[] => {
@@ -346,11 +348,8 @@ const renderSuggestions = (
     return;
   }
 
-  renderResults(input, results, status, suggestions, 'Popular articles');
-  announceStatus(
-    status,
-    `${suggestions.length} suggested ${suggestions.length === 1 ? 'article' : 'articles'} available.`,
-  );
+  renderResults(input, results, status, suggestions, ui.search.suggestions);
+  announceStatus(status, ui.search.suggestionCount(suggestions.length));
 };
 
 const searchPagefind = async (query: string): Promise<SearchEntry[] | null | undefined> => {
@@ -369,7 +368,7 @@ const searchPagefind = async (query: string): Promise<SearchEntry[] | null | und
       const preview = data.excerpt
         ? stripTags(data.excerpt)
         : (searchPreviews[normalizedUrl] ?? data.meta.preview ?? '');
-      const title = data.meta.title ?? 'Untitled';
+      const title = data.meta.title ?? ui.search.untitled;
 
       return {
         title,
@@ -386,8 +385,8 @@ const attachSearch = (root: HTMLElement) => {
   if (!elements) return;
 
   const { input, results, status } = elements;
-  const emptyMessage = root.dataset.searchEmpty ?? 'No matching articles found.';
-  const errorMessage = root.dataset.searchError ?? 'Search is temporarily unavailable.';
+  const emptyMessage = root.dataset.searchEmpty ?? ui.search.empty;
+  const errorMessage = root.dataset.searchError ?? ui.search.error;
   const isDialog = root.dataset.searchMode === 'dialog';
   let latestQuery = '';
   let activeResultIndex = -1;
@@ -460,7 +459,7 @@ const attachSearch = (root: HTMLElement) => {
       return;
     }
 
-    renderResults(input, results, status, matches, 'Search results', query);
+    renderResults(input, results, status, matches, ui.search.results, query);
     clearActiveResult();
     if (isDialog) setActiveResult(0);
   };

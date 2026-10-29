@@ -1,3 +1,5 @@
+import { ui } from '@/i18n';
+
 const codeLanguageLabels: Record<string, string> = {
   astro: 'Astro',
   bash: 'Bash',
@@ -9,7 +11,7 @@ const codeLanguageLabels: Record<string, string> = {
   md: 'Markdown',
   mdx: 'MDX',
   sh: 'Shell',
-  text: 'Text',
+  text: 'Tekst',
   ts: 'TypeScript',
   tsx: 'TSX',
   xml: 'XML',
@@ -155,8 +157,8 @@ const initCodeBlocks = () => {
     const copyButton = document.createElement('button');
     copyButton.type = 'button';
     copyButton.className = 'code-block-copy';
-    copyButton.setAttribute('aria-label', 'Copy code');
-    copyButton.setAttribute('title', 'Copy code');
+    copyButton.setAttribute('aria-label', ui.code.copy);
+    copyButton.setAttribute('title', ui.code.copy);
     copyButton.innerHTML = copyIcon;
 
     let tooltipResetTimeout: number | undefined;
@@ -174,22 +176,22 @@ const initCodeBlocks = () => {
     copyButton.addEventListener('click', async () => {
       try {
         await copyText(codeText);
-        copyButton.setAttribute('aria-label', 'Copied');
-        copyButton.setAttribute('title', 'Copied');
-        showCopyTooltip('Copied');
+        copyButton.setAttribute('aria-label', ui.code.copied);
+        copyButton.setAttribute('title', ui.code.copied);
+        showCopyTooltip(ui.code.copied);
         window.setTimeout(() => {
-          copyButton.setAttribute('aria-label', 'Copy code');
-          copyButton.setAttribute('title', 'Copy code');
+          copyButton.setAttribute('aria-label', ui.code.copy);
+          copyButton.setAttribute('title', ui.code.copy);
         }, 1600);
       } catch {
         copyButton.innerHTML = failedIcon;
-        copyButton.setAttribute('aria-label', 'Copy failed');
-        copyButton.setAttribute('title', 'Copy failed');
-        showCopyTooltip('Copy failed', 'error');
+        copyButton.setAttribute('aria-label', ui.code.copyFailed);
+        copyButton.setAttribute('title', ui.code.copyFailed);
+        showCopyTooltip(ui.code.copyFailed, 'error');
         window.setTimeout(() => {
           copyButton.innerHTML = copyIcon;
-          copyButton.setAttribute('aria-label', 'Copy code');
-          copyButton.setAttribute('title', 'Copy code');
+          copyButton.setAttribute('aria-label', ui.code.copy);
+          copyButton.setAttribute('title', ui.code.copy);
         }, 1600);
       }
     });
@@ -210,13 +212,13 @@ const initImageLightbox = () => {
   const lightboxBackdrop = document.createElement('button');
   lightboxBackdrop.type = 'button';
   lightboxBackdrop.className = 'docs-lightbox-backdrop';
-  lightboxBackdrop.setAttribute('aria-label', 'Close expanded image');
+  lightboxBackdrop.setAttribute('aria-label', ui.image.close);
 
   const lightboxDialog = document.createElement('div');
   lightboxDialog.className = 'docs-lightbox-dialog';
   lightboxDialog.setAttribute('role', 'dialog');
   lightboxDialog.setAttribute('aria-modal', 'true');
-  lightboxDialog.setAttribute('aria-label', 'Expanded article image');
+  lightboxDialog.setAttribute('aria-label', ui.image.expanded);
   lightboxDialog.tabIndex = -1;
 
   const lightboxFigure = document.createElement('figure');
@@ -369,7 +371,7 @@ const initHeadingAnchors = () => {
     anchor.className = 'heading-anchor';
     anchor.href = `#${heading.id}`;
     anchor.textContent = '#';
-    anchor.setAttribute('aria-label', `Link to ${heading.textContent?.trim() ?? 'this section'}`);
+    anchor.setAttribute('aria-label', ui.heading.linkTo(heading.textContent?.trim() || ui.heading.thisSection));
     heading.append(anchor);
   });
 };
@@ -386,15 +388,15 @@ const initCopyPage = () => {
     try {
       await copyText(JSON.parse(source.textContent ?? '""') as string);
       button.toggleAttribute('data-copied', true);
-      if (label) label.textContent = 'Copied';
+      if (label) label.textContent = ui.copyPage.copied;
     } catch {
-      if (label) label.textContent = 'Copy failed';
+      if (label) label.textContent = ui.copyPage.failed;
     }
 
     window.clearTimeout(resetTimeout);
     resetTimeout = window.setTimeout(() => {
       button.removeAttribute('data-copied');
-      if (label) label.textContent = 'Kopier siden';
+      if (label) label.textContent = ui.copyPage.label;
     }, 1800);
   });
 };

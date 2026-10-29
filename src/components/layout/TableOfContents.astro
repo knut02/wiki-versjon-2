@@ -1,4 +1,5 @@
 ---
+import { ui } from '@/i18n';
 import Icon from '@/components/ui/Icon.astro';
 
 interface Props {
@@ -9,10 +10,10 @@ interface Props {
 const { headings, editUrl } = Astro.props;
 ---
 
-<nav class="docs-rail" aria-label="Table of contents">
+<nav class="docs-rail" aria-label={ui.toc.label}>
   <p class="docs-toc-title">
     <Icon name="list-checks" class="size-4 text-muted" />
-    On this page
+    {ui.toc.onThisPage}
   </p>
   <ol class="docs-toc-list">
     {headings.map((heading) => (
@@ -31,12 +32,12 @@ const { headings, editUrl } = Astro.props;
     {editUrl && (
       <a href={editUrl} class="docs-toc-footer-link" target="_blank" rel="noreferrer">
         <Icon name="pencil-line" class="size-[0.9rem]" />
-        Edit this page
+        {ui.toc.editPage}
       </a>
     )}
     <a href="#content" class="docs-toc-footer-link">
       <Icon name="arrow-up" class="size-[0.9rem]" />
-      Back to top
+      {ui.toc.backToTop}
     </a>
   </div>
 </nav>

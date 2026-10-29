@@ -1,5 +1,6 @@
 ---
 import Icon from '@/components/ui/Icon.astro';
+import { ui } from '@/i18n';
 import type { SearchSuggestion } from '@/lib/docs';
 
 interface Props {
@@ -9,23 +10,23 @@ interface Props {
 const { suggestions } = Astro.props;
 ---
 
-<dialog class="search-dialog" aria-label="Søk i artiklene" data-search-dialog>
+<dialog class="search-dialog" aria-label={ui.search.label} data-search-dialog>
   <div
     class="search-dialog-panel"
     role="search"
     data-docs-search
     data-search-mode="dialog"
-    data-search-empty="Ingen artikler treffer søket."
-    data-search-error="Søket blir tilgjengelig etter en full bygg av siden."
+    data-search-empty={ui.search.empty}
+    data-search-error={ui.search.error}
     data-search-suggestions={JSON.stringify(suggestions)}
   >
     <div class="search-dialog-field">
       <Icon name="search" class="size-[1.15rem] text-muted" />
       <label for="search-dialog-input" class="sr-only">
-        Søk i artiklene
+        {ui.search.label}
       </label>
       <p id="search-dialog-hint" class="sr-only">
-        Type to search the documentation. Use the arrow keys to choose a result and Enter to open it.
+        {ui.search.hint}
       </p>
       <p id="search-dialog-status" class="sr-only" aria-live="polite" data-search-status></p>
       <input
@@ -33,7 +34,7 @@ const { suggestions } = Astro.props;
         type="search"
         role="combobox"
         class="search-input h-full text-[0.95rem]"
-        placeholder="Søk i artiklene..."
+        placeholder={ui.search.placeholder}
         autocomplete="off"
         spellcheck="false"
         aria-autocomplete="list"
@@ -43,7 +44,7 @@ const { suggestions } = Astro.props;
         aria-haspopup="listbox"
         data-search-input
       />
-      <button type="button" class="kbd !h-6 cursor-pointer !px-1.5" aria-label="Close search" data-search-close>
+      <button type="button" class="kbd !h-6 cursor-pointer !px-1.5" aria-label={ui.search.close} data-search-close>
         Esc
       </button>
     </div>
@@ -51,22 +52,22 @@ const { suggestions } = Astro.props;
       id="search-dialog-results"
       class="search-results hidden"
       role="listbox"
-      aria-label="Search results"
+      aria-label={ui.search.results}
       aria-hidden="true"
       data-search-results
     ></div>
     <div class="search-dialog-footer hidden sm:flex" aria-hidden="true">
       <span class="inline-flex items-center gap-1.5">
         <kbd class="kbd">↑</kbd>
-        <kbd class="kbd">↓</kbd> to navigate
+        <kbd class="kbd">↓</kbd> {ui.search.navigate}
       </span>
       <span class="inline-flex items-center gap-1.5">
-        <kbd class="kbd">↵</kbd> to open
+        <kbd class="kbd">↵</kbd> {ui.search.open}
       </span>
       <span class="inline-flex items-center gap-1.5">
-        <kbd class="kbd">esc</kbd> to close
+        <kbd class="kbd">esc</kbd> {ui.search.dismiss}
       </span>
-      <span class="ml-auto">Search by Pagefind</span>
+      <span class="ml-auto">{ui.search.poweredBy}</span>
     </div>
   </div>
 </dialog>

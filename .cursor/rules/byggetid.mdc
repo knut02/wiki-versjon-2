@@ -17,5 +17,6 @@ Ferdig: taggsidene `/tag/{slug}` får artikkellisten ferdig når sidene opprette
 
 Gjenstår:
 
-1. De 16 gjenstående adressene `/kategori/{hoved}` kan enten fjernes eller legges som videresending i Cloudflare. Ikke gjenopprett `/artikkel/…`, `/kategori/{hoved}/{under}`, de eldre navnene inne i kategorien, eller oppdiktede `/{kategori}/oversikt/{artikkel}`.
-2. Ta vare på Astros mellomlager mellom bygg på Cloudflare, slik at uendrede markdown-filer ikke gjengis på nytt.
+1. Tag-side endringer. Knut er usikker på hvordan de lette taggsidene ser ut, inkludert tilbakeknappen. Ikke endre utseendet før han ber om det.
+2. De 16 gjenstående adressene `/kategori/{hoved}` kan enten fjernes eller legges som videresending i Cloudflare. Ikke gjenopprett `/artikkel/…`, `/kategori/{hoved}/{under}`, de eldre navnene inne i kategorien, eller oppdiktede `/{kategori}/oversikt/{artikkel}`.
+3. Ta vare på Astros mellomlager mellom bygg på Cloudflare, slik at uendrede markdown-filer ikke gjengis på nytt.

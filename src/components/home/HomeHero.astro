@@ -1,6 +1,7 @@
 ---
 import Icon from '@/components/ui/Icon.astro';
 import { home } from '@/config/home';
+import { ui } from '@/i18n';
 import type { SearchSuggestion } from '@/lib/docs';
 
 interface Props {
@@ -37,15 +38,15 @@ const { hero, popular } = home;
       style="--rise-delay: 180ms"
       role="search"
       data-docs-search
-      data-search-empty="Ingen artikler treffer søket."
-      data-search-error="Søket blir tilgjengelig etter en full bygg av siden."
+      data-search-empty={ui.search.empty}
+      data-search-error={ui.search.error}
       data-search-suggestions={JSON.stringify(suggestions)}
     >
       <label class="sr-only" for="hero-search-input">
-        Søk i artiklene
+        {ui.search.label}
       </label>
       <p id="hero-search-hint" class="sr-only">
-        Type to search the documentation. Use the arrow keys to choose a result and Enter to open it.
+        {ui.search.hint}
       </p>
       <p id="hero-search-status" class="sr-only" data-search-status aria-live="polite"></p>
       <div class="search-field h-14 gap-3 px-5 md:h-16">
@@ -76,7 +77,7 @@ const { hero, popular } = home;
         id="hero-search-results"
         class="search-results hidden"
         role="listbox"
-        aria-label="Search results"
+        aria-label={ui.search.results}
         aria-hidden="true"
         data-search-results
       ></div>

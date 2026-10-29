@@ -1,5 +1,6 @@
 ---
 import Icon from '@/components/ui/Icon.astro';
+import { ui } from '@/i18n';
 
 interface Item {
   title: string;
@@ -35,6 +36,8 @@ const { items, pageSize = 8 } = Astro.props;
 </div>
 
 <script>
+  import { ui } from '@/i18n';
+
   document.querySelectorAll<HTMLElement>('[data-pagination-root]').forEach((root) => {
     const pageSize = Number(root.dataset.paginationPageSize ?? '8');
     const items = Array.from(root.querySelectorAll<HTMLElement>('[data-page-item]'));
@@ -71,14 +74,14 @@ const { items, pageSize = 8 } = Astro.props;
 
       controls.classList.remove('hidden');
       controls.replaceChildren(
-        makeButton('Prev', currentPage - 1, { disabled: currentPage === 1 }),
+        makeButton(ui.pagination.previous, currentPage - 1, { disabled: currentPage === 1 }),
         ...Array.from({ length: pageCount }, (_, index) =>
           makeButton(String(index + 1), index + 1, {
             active: index + 1 === currentPage,
-            ariaLabel: `Go to page ${index + 1}`,
+            ariaLabel: ui.pagination.goToPage(index + 1),
           }),
         ),
-        makeButton('Next', currentPage + 1, { disabled: currentPage === pageCount }),
+        makeButton(ui.pagination.next, currentPage + 1, { disabled: currentPage === pageCount }),
       );
     };
 

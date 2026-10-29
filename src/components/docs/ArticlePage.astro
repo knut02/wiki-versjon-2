@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
 import Card from '@/components/docs/Card.astro';
 import { mdxComponents } from '@/components/docs/mdx-components';
+import { ui } from '@/i18n';
 import Icon from '@/components/ui/Icon.astro';
 import { siteConfig } from '@/config/site';
 import DocsLayout from '@/layouts/DocsLayout.astro';
@@ -122,7 +123,7 @@ const structuredData = [
         <button type="button" class="copy-page sm:ml-auto" data-copy-page>
           <Icon name="copy" class="icon-copy size-[0.85rem]" />
           <Icon name="check" class="icon-check size-[0.85rem]" />
-          <span data-copy-page-label>Kopier siden</span>
+          <span data-copy-page-label>{ui.copyPage.label}</span>
         </button>
       </div>
     </header>
@@ -206,7 +207,7 @@ const structuredData = [
       {editUrl && (
         <a href={editUrl} class="docs-toc-footer-link" target="_blank" rel="noreferrer">
           <Icon name="pencil-line" class="size-[0.9rem]" />
-          Edit this page
+          {ui.toc.editPage}
         </a>
       )}
     </footer>

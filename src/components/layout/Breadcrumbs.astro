@@ -1,5 +1,6 @@
 ---
 import Icon from '@/components/ui/Icon.astro';
+import { ui } from '@/i18n';
 
 interface Props {
   items: { label: string; href?: string }[];
@@ -8,7 +9,7 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<nav aria-label="Breadcrumb">
+<nav aria-label={ui.a11y.breadcrumb}>
   <ol class="docs-breadcrumbs">
     {items.map((item, index) => (
       <li class="inline-flex items-center gap-1.5">
