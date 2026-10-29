@@ -15,8 +15,9 @@ Ferdig: alle adresser under `/artikkel/` er fjernet, både de 544 entydige filna
 
 Ferdig: taggsidene `/tag/{slug}` får artikkellisten ferdig når sidene opprettes. Filen inneholder taggnavnet, lenkene og nettstedets standard topptekst, inkludert søk. Tilbakeknappen er fjernet. Bunntekst skrives ikke inn der. Taggmenyen og «Alle tags» blir værende.
 
+Ferdig: Astros mellomlager ligger i `node_modules/.astro`, mappen Cloudflare tar vare på. Loaderen gjenbruker en ferdig artikkel når teksten, lenkene og de lagrede dataene er uendret. Endret gjengivelse krever at `renderCacheVersion` i `src/lib/wiki-loader.js` økes.
+
 Gjenstår:
 
 1. Tag-side endringer. Toppteksten er den vanlige, og tilbakeknappen er borte. Knut er fortsatt usikker på resten av utseendet. Ikke endre mer, og ikke legg inn bunntekst, før han ber om det.
 2. De 16 gjenstående adressene `/kategori/{hoved}` kan enten fjernes eller legges som videresending i Cloudflare. Ikke gjenopprett `/artikkel/…`, `/kategori/{hoved}/{under}`, de eldre navnene inne i kategorien, eller oppdiktede `/{kategori}/oversikt/{artikkel}`.
-3. Ta vare på Astros mellomlager mellom bygg på Cloudflare, slik at uendrede markdown-filer ikke gjengis på nytt.

@@ -92,6 +92,9 @@ function demoteHeadings(html) {
   return html.replaceAll("<h1", "<h2").replaceAll("</h1>", "</h2>");
 }
 
+// Økes når selve gjengivelsen endres, så lagrede artikler blir laget på nytt.
+const renderCacheVersion = 1;
+
 async function sync({ store, parseData, renderMarkdown, generateDigest, logger, config }) {
   sectionTitles.clear();
   const files = [];
@@ -168,21 +171,12 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
     logger.warn(`Like id-er brukes ikke i oppslag: ${index.duplicateIds.join(", ")}`);
   }
   const backlinks = backlinksByArticle(articles, index);
-  const ready = [];
+  const seen = new Set();
+  let reused = 0;
 
-  for (const { article, file, raw } of parsed) {
+  for (const { article, file } of parsed) {
     const body = linkify(article.body, index);
-    let rendered;
-    try {
-      rendered = await renderMarkdown(`\u200b\n${body}`, { fileURL: pathToFileURL(file) });
-    } catch (error) {
-      if (isTransient(error)) {
-        skipped += 1;
-        continue;
-      }
-      throw error;
-    }
-    rendered.html = demoteHeadings(rendered.html).replaceAll("\u200b", "");
+    const filePath = path.relative(fileURLToPath(config.root), file).replaceAll("\\", "/");
     const data = await parseData({
       id: article.pathKey,
       data: {
@@ -206,20 +200,41 @@ async function sync({ store, parseData, renderMarkdown, generateDigest, logger, 
       },
       filePath: file,
     });
-    ready.push({
+    const digest = generateDigest({ v: renderCacheVersion, body, data, filePath });
+    const cached = store.get(article.pathKey);
+    if (cached?.digest === digest && cached.rendered?.html) {
+      reused += 1;
+      seen.add(article.pathKey);
+      continue;
+    }
+    let rendered;
+    try {
+      rendered = await renderMarkdown(`\u200b\n${body}`, { fileURL: pathToFileURL(file) });
+    } catch (error) {
+      if (isTransient(error)) {
+        skipped += 1;
+        continue;
+      }
+      throw error;
+    }
+    rendered.html = demoteHeadings(rendered.html).replaceAll("\u200b", "");
+    if (cached?.digest === digest) store.delete(article.pathKey);
+    store.set({
       id: article.pathKey,
       data,
       body,
-      filePath: path.relative(fileURLToPath(config.root), file).replaceAll("\\", "/"),
-      digest: generateDigest(raw),
+      filePath,
+      digest,
       rendered,
     });
+    seen.add(article.pathKey);
   }
 
-  store.clear();
-  for (const entry of ready) store.set(entry);
+  for (const id of [...store.keys()]) {
+    if (!seen.has(id)) store.delete(id);
+  }
 
-  logger.info(`${ready.length} artikler, ${skipped} filer uten tittel`);
+  logger.info(`${seen.size} artikler, ${reused} uendret, ${skipped} filer uten tittel`);
 }
 
 function scheduleSync(context) {

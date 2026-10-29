@@ -10,6 +10,8 @@ const root = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   site: siteConfig.siteUrl,
+  // Workers Builds tar vare på denne mappen mellom bygg.
+  cacheDir: "./node_modules/.astro",
   trailingSlash: "never",
   server: { port: 4173 },
   integrations: [
