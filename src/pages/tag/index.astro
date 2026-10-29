@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
+import Icon from "@/components/ui/Icon.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getTags, loadDocs, type DocsTag } from "@/lib/docs";
 
@@ -21,22 +22,47 @@ for (const tag of tags) {
     <header class="mt-6 border-b border-line pb-8">
       <p class="eyebrow">Tags</p>
       <h1 class="mt-3 text-[2.15rem] leading-[1.15] font-bold tracking-[-0.035em] md:text-[2.6rem]">Alle tags</h1>
-      <p class="docs-meta mt-5">{`${tags.length} ${tags.length === 1 ? "tag" : "tagger"}`}</p>
+      {
+        tags.length > 0 && (
+          <div class="mt-8 max-w-xl" role="search">
+            <label class="sr-only" for="tag-filter">
+              Filtrer tagger
+            </label>
+            <div class="search-field h-12 gap-3 px-4">
+              <Icon name="search" class="size-4 text-faint" />
+              <input
+                id="tag-filter"
+                type="search"
+                class="search-input text-base"
+                placeholder="Filtrer tagger..."
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                enterkeyhint="search"
+              />
+            </div>
+          </div>
+        )
+      }
+      <p id="tag-filter-count" class="docs-meta mt-5" aria-live="polite">
+        {`${tags.length} ${tags.length === 1 ? "tag" : "tagger"}`}
+      </p>
     </header>
 
     {
       tags.length === 0 ? (
         <div class="panel mt-8 px-6 py-14 text-center text-muted">Ingen tagger.</div>
       ) : (
-        <div class="mt-10 space-y-10">
+        <div class="mt-10 space-y-10" data-tag-index>
+          <div id="tag-filter-empty" class="panel px-6 py-14 text-center text-muted" hidden>Ingen tagger treffer.</div>
           {[...groups.entries()].map(([letter, group]) => (
-            <section aria-labelledby={`tags-${letter}`}>
+            <section aria-labelledby={`tags-${letter}`} data-tag-group>
               <h2 id={`tags-${letter}`} class="eyebrow">
                 {letter}
               </h2>
               <ul class="article-tags mt-4">
                 {group.map((tag) => (
-                  <li>
+                  <li data-tag-name={tag.name}>
                     <a href={`/tag/${tag.slug}`}>
                       {tag.name}
                       <span class="text-muted"> {tag.count}</span>
@@ -49,5 +75,43 @@ for (const tag of tags) {
         </div>
       )
     }
+    <script>
+      const input = document.querySelector<HTMLInputElement>("#tag-filter");
+      const count = document.querySelector<HTMLElement>("#tag-filter-count");
+      const empty = document.querySelector<HTMLElement>("#tag-filter-empty");
+      const groups = [...document.querySelectorAll<HTMLElement>("[data-tag-group]")];
+      const total = groups.reduce((sum, group) => sum + group.querySelectorAll("[data-tag-name]").length, 0);
+
+      const fold = (value: string) =>
+        value
+          .toLocaleLowerCase("nb")
+          .replaceAll("æ", "ae")
+          .replaceAll("ø", "o")
+          .replaceAll("å", "a")
+          .normalize("NFD")
+          .replace(/\p{M}/gu, "");
+
+      const label = (shown: number) => `${shown} ${shown === 1 ? "tag" : "tagger"}`;
+
+      const apply = () => {
+        const query = fold(input?.value.trim() ?? "");
+        let shown = 0;
+        for (const group of groups) {
+          let visible = 0;
+          for (const item of group.querySelectorAll<HTMLElement>("[data-tag-name]")) {
+            const name = fold(item.dataset.tagName ?? "");
+            const match = query === "" || name.includes(query);
+            item.hidden = !match;
+            if (match) visible += 1;
+          }
+          group.hidden = visible === 0;
+          shown += visible;
+        }
+        if (count) count.textContent = label(query ? shown : total);
+        if (empty) empty.hidden = query === "" || shown > 0;
+      };
+
+      input?.addEventListener("input", apply);
+    </script>
   </div>
 </BaseLayout>
