@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "postbuild": "pagefind --site dist",
+    "postbuild": "node scripts/pagefind.mjs",
     "preview": "astro preview",
     "deploy": "wrangler deploy"
   },

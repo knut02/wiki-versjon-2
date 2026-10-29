@@ -9,11 +9,12 @@ Knut vil beholde alle funksjoner og ta tiltakene ett om gangen. Ikke implementer
 
 Ferdig: søkeforhåndsvisningene ligger i `/search-previews.json` og hentes når søkefeltet åpnes. De skrives ikke inn i hver HTML-side. De fem forslagene i tomt søk, og utvalgschipsene på forsiden, blir værende i siden.
 
+Ferdig: Pagefind hopper over mappen `dist/tag` mens indeksen lages, og legger den tilbake etterpå. Taggmeny, alle-tags og `/tag/{slug}` blir værende. Søket dekker artiklene.
+
 Ferdig: alle adresser under `/artikkel/` er fjernet, både de 544 entydige filnavnene og de 34 eldre navnene. De samme 34 eldre navnene inne i kategorien, som `/personer/gt/gt-abraham`, er også fjernet. De 17 oppdiktede `/{kategori}/oversikt/{artikkel}`-adressene er fjernet. De 65 videresendingene `/kategori/{hoved}/{under}` er fjernet. Ikke legg dem tilbake. En ekte mappe som heter `oversikt` er fortsatt en underkategori. De 16 adressene `/kategori/{hoved}` er fortsatt sider.
 
 Gjenstår:
 
-1. Pagefind skal hoppe over taggsider og videresendinger. Søket indekserer artiklene. Taggmeny, alle-tags og de gamle adressene blir værende.
-2. Taggsidene beholder adressen `/tag/{slug}`, men blir lette sider med bare listen over artiklene som har taggen.
-3. De 16 gjenstående adressene `/kategori/{hoved}` kan enten fjernes eller legges som videresending i Cloudflare. Ikke gjenopprett `/artikkel/…`, `/kategori/{hoved}/{under}`, de eldre navnene inne i kategorien, eller oppdiktede `/{kategori}/oversikt/{artikkel}`.
-4. Ta vare på Astros mellomlager mellom bygg på Cloudflare, slik at uendrede markdown-filer ikke gjengis på nytt.
+1. Taggsidene beholder adressen `/tag/{slug}`, men blir lette sider med bare listen over artiklene som har taggen.
+2. De 16 gjenstående adressene `/kategori/{hoved}` kan enten fjernes eller legges som videresending i Cloudflare. Ikke gjenopprett `/artikkel/…`, `/kategori/{hoved}/{under}`, de eldre navnene inne i kategorien, eller oppdiktede `/{kategori}/oversikt/{artikkel}`.
+3. Ta vare på Astros mellomlager mellom bygg på Cloudflare, slik at uendrede markdown-filer ikke gjengis på nytt.

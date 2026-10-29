@@ -50,7 +50,7 @@ Forsiden viser hovedkategoriene i den rekkefølgen `order` gir. Underkategoriene
 
 ## Søk
 
-Søket er [Pagefind](https://pagefind.app/). Indeksen lages etter bygg, i `postbuild` (`pagefind --site dist`). På utviklingsserveren finnes ikke indeksen, og søkefeltet sier fra om det. Fulltekstsøk virker etter `npm run build` og `npm run preview`, og på den publiserte siden.
+Søket er [Pagefind](https://pagefind.app/). Indeksen lages etter bygg. Pagefind hopper over taggsidene, og søket dekker artiklene. På utviklingsserveren finnes ikke indeksen, og søkefeltet sier fra om det. Fulltekstsøk virker etter `npm run build` og `npm run preview`, og på den publiserte siden.
 
 ## Kjøring
 
