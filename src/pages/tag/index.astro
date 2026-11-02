@@ -2,18 +2,10 @@
 import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
 import Icon from "@/components/ui/Icon.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getTags, loadDocs, type DocsTag } from "@/lib/docs";
+import { getTags, groupTagsByLetter, loadDocs, tagHref } from "@/lib/docs";
 
 const tags = getTags(await loadDocs());
-const groups = new Map<string, DocsTag[]>();
-
-for (const tag of tags) {
-  const first = tag.name.trim().charAt(0);
-  const letter = /\p{N}/u.test(first) ? "0–9" : first.toLocaleUpperCase("nb");
-  const group = groups.get(letter) ?? [];
-  group.push(tag);
-  groups.set(letter, group);
-}
+const groups = groupTagsByLetter(tags);
 ---
 
 <BaseLayout title="Alle tags" description="Alle tagger i biblioteket.">
@@ -55,15 +47,15 @@ for (const tag of tags) {
       ) : (
         <div class="mt-10 space-y-10" data-tag-index>
           <div id="tag-filter-empty" class="panel px-6 py-14 text-center text-muted" hidden>Ingen tagger treffer.</div>
-          {[...groups.entries()].map(([letter, group]) => (
-            <section aria-labelledby={`tags-${letter}`} data-tag-group>
-              <h2 id={`tags-${letter}`} class="eyebrow">
-                {letter}
+          {groups.map((group) => (
+            <section aria-labelledby={`tags-${group.key}`} data-tag-group>
+              <h2 id={`tags-${group.key}`} class="eyebrow">
+                <a href={`/tag/${group.key}`}>{group.label}</a>
               </h2>
               <ul class="article-tags mt-4">
-                {group.map((tag) => (
+                {group.tags.map((tag) => (
                   <li data-tag-name={tag.name}>
-                    <a href={`/tag/${tag.slug}`}>
+                    <a href={tagHref(tag)}>
                       {tag.name}
                       <span class="text-muted"> {tag.count}</span>
                     </a>

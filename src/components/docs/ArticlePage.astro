@@ -16,6 +16,7 @@ import {
   getParents,
   getReadingTime,
   loadDocs,
+  tagHref,
 } from '@/lib/docs';
 
 interface Props {
@@ -104,7 +105,7 @@ const structuredData = [
         <ul class="article-tags mt-5" data-pagefind-ignore>
           {doc.entry.data.tags.map((tag) => (
             <li>
-              <a href={`/tag/${tag.slug}`}>{tag.name}</a>
+              <a href={tagHref(tag)}>{tag.name}</a>
             </li>
           ))}
         </ul>

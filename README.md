@@ -40,11 +40,11 @@ Artikler som lenker hit, samles under innlesing og vises som «Nevnt i» nederst
 | Underkategori | `/{kategori}/{underkategori}` |
 | Artikkel i en underkategori | `/{kategori}/{underkategori}/{artikkel}` |
 | Artikkel i hovedkategorien | `/{kategori}/{artikkel}` |
-| Tagg | `/tag/{tagg}` |
+| Tagger på en bokstav | `/tag/{bokstav}` |
 
 Eldre adresser videresendes: `/kategori/{slug}` for hovedkategoriene. `/kategori/{slug}/{underkategori}`, adresser under `/artikkel/` og den oppdiktede bolken `/{kategori}/oversikt/{artikkel}` er tatt bort.
 
-Forsiden viser hovedkategoriene i den rekkefølgen `order` gir. Underkategoriene vises på kategorisiden. Artikler som ligger rett i toppmappen vises der også. Taggene på en artikkel lenker til taggsiden.
+Forsiden viser hovedkategoriene i den rekkefølgen `order` gir. Underkategoriene vises på kategorisiden. Artikler som ligger rett i toppmappen vises der også. Taggene på en artikkel lenker til bokstavsiden, med taggen som anker. `/tag` er oversikten. Tall samles på `/tag/0-9`, og tagger som ikke starter med en bokstav eller et tall, på `/tag/andre`.
 
 «Utvalg» under søkefeltet er de fire første artiklene i alfabetisk rekkefølge. Antall og eventuell avgrensning styres av `popular` i `src/config/home.ts`.
 

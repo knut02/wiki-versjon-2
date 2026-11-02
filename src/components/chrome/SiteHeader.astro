@@ -2,7 +2,7 @@
 import Icon from '@/components/ui/Icon.astro';
 import Logomark from '@/components/ui/Logomark.astro';
 import { siteConfig } from '@/config/site';
-import { getParents, getPopularTags, loadDocs } from '@/lib/docs';
+import { getParents, getPopularTags, loadDocs, tagHref } from '@/lib/docs';
 
 const docs = await loadDocs();
 const parents = getParents(docs);
@@ -65,9 +65,9 @@ const currentParent = parents.find((parent) => isActive(`/${parent.slug}`));
     <nav class="shell grid gap-1 py-4 sm:grid-cols-2" aria-label="Vanlige tagger">
       {
         popularTags.map((tag) => {
-          const href = `/tag/${tag.slug}`;
+          const href = tagHref(tag);
           return (
-            <a href={href} class="category-menu-link" aria-current={pathname === href ? 'page' : undefined}>
+            <a href={href} class="category-menu-link">
               <span class="min-w-0">
                 <span class="block truncate">{tag.name}</span>
                 <span class="mt-0.5 block text-xs font-normal text-muted">

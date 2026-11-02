@@ -130,6 +130,39 @@ export function getTags(docs: DocView[]): DocsTag[] {
   return collectTags(docs).sort((a, b) => a.name.localeCompare(b.name, "nb") || a.slug.localeCompare(b.slug));
 }
 
+export function tagLetterKey(name: string) {
+  const first = name.trim().charAt(0);
+  if (/^\p{N}$/u.test(first)) return "0-9";
+  if (/^\p{L}$/u.test(first)) return first.toLocaleLowerCase("nb");
+  return "andre";
+}
+
+export function tagLetterLabel(key: string) {
+  if (key === "0-9") return "0–9";
+  if (key === "andre") return "Andre";
+  return key.toLocaleUpperCase("nb");
+}
+
+export function tagHref(tag: { name: string; slug: string }) {
+  return `/tag/${tagLetterKey(tag.name)}#${tag.slug}`;
+}
+
+export function groupTagsByLetter(tags: DocsTag[]) {
+  const groups = new Map<string, DocsTag[]>();
+  for (const tag of tags) {
+    const key = tagLetterKey(tag.name);
+    const group = groups.get(key) ?? [];
+    group.push(tag);
+    groups.set(key, group);
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => {
+      const rank = (key: string) => (key === "0-9" ? 0 : key === "andre" ? 2 : 1);
+      return rank(a) - rank(b) || a.localeCompare(b, "nb");
+    })
+    .map(([key, group]) => ({ key, label: tagLetterLabel(key), tags: group }));
+}
+
 export function getPopularTags(docs: DocView[], limit = 10): DocsTag[] {
   return collectTags(docs)
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "nb"))
