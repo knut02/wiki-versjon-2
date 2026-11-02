@@ -1,0 +1,16 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<button type="button" class="back-to-top" data-back-to-top>
+  <Icon name="arrow-up" class="size-5" />
+  <span class="sr-only">Til toppen</span>
+</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>("[data-back-to-top]");
+  button?.addEventListener("click", () => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  });
+</script>

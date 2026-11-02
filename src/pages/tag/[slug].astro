@@ -1,4 +1,5 @@
 ---
+import BackToTop from "@/components/chrome/BackToTop.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getDocHref, getTags, loadDocs, tagLetterKey, tagLetterLabel } from "@/lib/docs";
 
@@ -87,4 +88,5 @@ const { label, tags } = Astro.props;
       ))
     }
   </div>
+  <BackToTop />
 </BaseLayout>

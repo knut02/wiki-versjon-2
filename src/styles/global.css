@@ -333,6 +333,28 @@ html.dark {
     color: var(--ink);
   }
 
+  .back-to-top {
+    position: fixed;
+    z-index: 30;
+    top: 50%;
+    right: 1.25rem;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.625rem;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transform: translateY(-50%);
+  }
+
+  .back-to-top:hover {
+    background: var(--sunken);
+  }
+
   /* Header */
 
   .site-header {

@@ -1,4 +1,5 @@
 ---
+import BackToTop from "@/components/chrome/BackToTop.astro";
 import Breadcrumbs from "@/components/layout/Breadcrumbs.astro";
 import Icon from "@/components/ui/Icon.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -106,4 +107,5 @@ const groups = groupTagsByLetter(tags);
       input?.addEventListener("input", apply);
     </script>
   </div>
+  <BackToTop />
 </BaseLayout>
