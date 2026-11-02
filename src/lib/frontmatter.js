@@ -1,3 +1,4 @@
+import { parse as parseYaml } from "yaml";
 import { slugify } from "./slug.js";
 
 const WIKI_LINK = /\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g;
@@ -137,6 +138,24 @@ function tags(value) {
     .map((name) => ({ name, slug: slugify(name) }));
 }
 
+export function readJsonLd(frontmatter) {
+  const match = frontmatter.match(/^jsonld:[ \t]*\n/m);
+  if (!match) return undefined;
+  const lines = [];
+  for (const line of frontmatter.slice(match.index + match[0].length).split("\n")) {
+    if (line !== "" && !line.startsWith(" ") && !line.startsWith("\t")) break;
+    lines.push(line);
+  }
+  try {
+    const parsed = parseYaml(`jsonld:\n${lines.join("\n")}`, { schema: "core" });
+    const jsonld = parsed?.jsonld;
+    if (!jsonld || typeof jsonld !== "object" || Array.isArray(jsonld)) return undefined;
+    return jsonld;
+  } catch {
+    return undefined;
+  }
+}
+
 export function parseArticle(raw, fallbackSlug) {
   const source = raw.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
   if (!source.startsWith("---\n")) return null;
@@ -161,6 +180,7 @@ export function parseArticle(raw, fallbackSlug) {
     links: wikiLinks(body),
     order: orderField(frontmatter),
     id: rawId ? slugify(rawId) : "",
+    jsonld: readJsonLd(frontmatter),
     body,
   };
 }

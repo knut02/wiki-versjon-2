@@ -23,6 +23,8 @@ const artikler = defineCollection({
     slug: z.string(),
     legacySlug: z.string().default(""),
     id: z.string().default(""),
+    // Innrykket jsonld-blokk fra markdown. Ufullstendige blokker er tillatt.
+    jsonld: z.record(z.string(), z.unknown()).optional(),
     backlinks: z
       .array(z.object({ title: z.string(), href: z.string(), section: z.string() }))
       .default([]),

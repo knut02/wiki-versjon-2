@@ -6,6 +6,7 @@ import { mdxComponents } from '@/components/docs/mdx-components';
 import { ui } from '@/i18n';
 import Icon from '@/components/ui/Icon.astro';
 import { siteConfig } from '@/config/site';
+import { articlesById, withArticleLinks } from '@/lib/jsonld';
 import DocsLayout from '@/layouts/DocsLayout.astro';
 import {
   formatDate,
@@ -55,16 +56,24 @@ const articlePagefindAttributes = doc.data.hideFromSearch
   ? { 'data-pagefind-ignore': 'all' }
   : { 'data-pagefind-body': true, 'data-pagefind-meta': `category:${sectionName}` };
 
+const articleJsonLd = doc.entry.data.jsonld
+  ? {
+      ...withArticleLinks(doc.entry.data.jsonld, articlesById(publicDocs), (entry) =>
+        new URL(getDocHref(entry), siteConfig.siteUrl).toString(),
+      ),
+      url: pageUrl,
+    }
+  : {
+      '@context': 'https://schema.org',
+      '@type': 'TechArticle',
+      headline: doc.data.title,
+      description: doc.data.description,
+      url: pageUrl,
+      ...(doc.data.updatedAt && { dateModified: doc.data.updatedAt.toISOString() }),
+      publisher: { '@type': 'Organization', name: siteConfig.name },
+    };
 const structuredData = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'TechArticle',
-    headline: doc.data.title,
-    description: doc.data.description,
-    url: pageUrl,
-    ...(doc.data.updatedAt && { dateModified: doc.data.updatedAt.toISOString() }),
-    publisher: { '@type': 'Organization', name: siteConfig.name },
-  },
+  articleJsonLd,
   {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',

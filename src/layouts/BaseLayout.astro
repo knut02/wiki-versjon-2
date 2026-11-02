@@ -85,7 +85,7 @@ const schema = structuredData ?? {
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replaceAll("<", "\\u003c")} />
     <script is:inline>
       (() => {
         const storageKey = 'compass-theme';
