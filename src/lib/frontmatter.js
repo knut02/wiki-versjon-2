@@ -167,10 +167,13 @@ export function parseArticle(raw, fallbackSlug) {
   if (!title) return null;
   const kategori = field(frontmatter, "kategori") || "Uten kategori";
   const rawId = field(frontmatter, "id");
+  const jsonld = readJsonLd(frontmatter);
+  const jsonldDescription = typeof jsonld?.description === "string" ? jsonld.description.trim() : "";
+  const topDescription = field(frontmatter, "description").trim();
   return {
     slug: fallbackSlug,
     title,
-    description: field(frontmatter, "description"),
+    description: topDescription || jsonldDescription,
     date: field(frontmatter, "date"),
     modified: field(frontmatter, "modified"),
     kategori,
@@ -180,7 +183,7 @@ export function parseArticle(raw, fallbackSlug) {
     links: wikiLinks(body),
     order: orderField(frontmatter),
     id: rawId ? slugify(rawId) : "",
-    jsonld: readJsonLd(frontmatter),
+    jsonld,
     body,
   };
 }

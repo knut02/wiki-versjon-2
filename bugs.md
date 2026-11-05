@@ -21,34 +21,6 @@ Med tastatur kommer den sist, etter alle taggene og artiklene på siden.
 
 Uten JavaScript gjør knappen ingenting. Den har ingen adresse å falle tilbake på.
 
-## Beskrivelse inne i jsonld brukes ikke
-
-Leseren tar bare `description` når ordet står først på linjen. En beskrivelse som ligger innrykket under `jsonld:` blir ignorert. 67 artikler har beskrivelsen bare der.
-
-De sidene får tom ingress, tom beskrivelse i søket og tom `meta description`. Eksempel: `Bibelen - det Nye Testamentet/apenbaringen/aapenbaring-1-1-8-prolog-alfa-og-omega.md`.
-
-## llms.txt hopper over artikler som ligger rett i hovedkategorien
-
-`src/pages/llms.txt.ts` går bare gjennom underkategoriene. 17 artikler ligger rett i hovedmappen og kommer ikke med:
-
-- `historie/elvedalssivilisasjonene.md`
-- `historie/fra-oldtid-til-middelalder.md`
-- `historie/homo-sapiens.md`
-- `steder/abarim.md`
-- `steder/betania.md`
-- `steder/jerusalem.md`
-- `studieplaner/johannes-evangeliet-studieplan.md`
-- `studieplaner/studievei-evangeliene.md`
-- `studieplaner/studievei-kirkehistorie.md`
-- `studieplaner/studievei-paulusbrevene.md`
-- `tidslinjer/bibelhistorie-nokkelhendelser.md`
-- `tidslinjer/gt-tidslinje.md`
-- `tidslinjer/kirkefedrene-tidslinje.md`
-- `tidslinjer/kirkehistorie-tidslinje-30-100.md`
-- `tidslinjer/kirkehistorie-tidslinje-750-2000.md`
-- `tidslinjer/mellom-testamentene.md`
-- `tidslinjer/nt-tidslinje.md`
-
 ## Knappen som forstørrer bilder er på engelsk
 
 I `src/scripts/article-enhancements.ts` får bildeknappen teksten `Expand image`. Lukking og selve dialogen bruker de norske tekstene i `src/i18n/nb.ts`. Ingen artikler har bilder nå, så knappen vises ikke før et bilde legges inn.

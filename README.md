@@ -27,6 +27,8 @@ Slug lages med små bokstaver. `æ` blir `ae`, `ø` blir `o`, `å` blir `a`.
 
 Lenker med skråstrek, `[[sti/filnavn]]` eller `[[sti/filnavn|alias]]`, slås opp på mappesti og filnavn. Først en sti som treffer nøyaktig, deretter en sti som er et entydig suffiks, og til slutt et filnavn som bare finnes én gang.
 
+Ingress, søketekst og `meta description` kommer fra `description` øverst i frontmatter. Mangler feltet, brukes `description` inne i `jsonld`.
+
 Datoen «Oppdatert» kommer fra `modified`. Mangler feltet, eller kan det ikke leses, brukes `date`.
 
 Artikler som lenker hit, samles under innlesing og vises som «Nevnt i» nederst på artikkelsiden. Seksjonen vises bare når minst én lenke treffer.
